@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/chapter-index.schema.json",
+  "title": "CanonLoom Chapter Index",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "chapter_count", "chapters"],
+  "properties": {
+    "schema_version": {"const": "0.2"},
+    "generated_at": {"type": "string"},
+    "chapter_count": {"type": "integer", "minimum": 0},
+    "chapters": {"type": "array", "items": {"type": "object", "required": ["id", "title", "file", "cjk_chars", "source_sha256"]}}
+  },
+  "additionalProperties": true
+}

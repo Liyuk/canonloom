@@ -1,0 +1,16 @@
+{
+  "workflow_id": "canonloom-standard",
+  "work_id": "work-001",
+  "run_id": "20260803-1200-work-001-S0",
+  "stage_id": "S0",
+  "started_at": "2026-08-03T12:00:00Z",
+  "finished_at": "2026-08-03T12:05:00Z",
+  "inputs": [],
+  "outputs": [],
+  "status": "NOT_RUN",
+  "actual_changes": "NONE",
+  "preserved_risks": "NONE",
+  "open_loops": "NONE",
+  "next_stage": "STOP",
+  "finding_refs": []
+}

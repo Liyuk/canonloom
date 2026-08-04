@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/stage-log.schema.json",
+  "title": "CanonLoom Stage Log",
+  "type": "object",
+  "required": ["workflow_id", "work_id", "run_id", "stage_id", "status", "actual_changes", "preserved_risks", "open_loops", "next_stage"],
+  "properties": {
+    "workflow_id": {"type": "string", "minLength": 1},
+    "work_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "stage_id": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "S5b", "S6"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "inputs": {"type": "array", "items": {"type": "string"}},
+    "outputs": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["COMPLETED", "BLOCKED", "NEEDS_REVIEW", "FAILED", "NOT_RUN"]},
+    "actual_changes": {"type": "string"},
+    "preserved_risks": {"type": "string"},
+    "open_loops": {"type": "string"},
+    "next_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "S5b", "S6", "HUMAN_DECISION", "STOP"]},
+    "finding_refs": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/style-profile.schema.json",
+  "title": "CanonLoom Style Profile",
+  "type": "object",
+  "required": ["schema_version", "profile_id", "name", "narrative", "rhythm", "dialogue", "surface", "review_questions"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "narrative": {"type": "object", "additionalProperties": true},
+    "rhythm": {"type": "object", "additionalProperties": true},
+    "dialogue": {"type": "object", "additionalProperties": true},
+    "surface": {"type": "object", "additionalProperties": true},
+    "review_questions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

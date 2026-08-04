@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/handoff.schema.json",
+  "title": "CanonLoom Handoff",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "work_id", "source_stage", "status", "current_files", "next_action", "approval"],
+  "properties": {
+    "schema_version": {"const": "0.2"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "work_id": {"type": "string", "minLength": 1},
+    "source_stage": {"enum": ["S0", "S1", "S2", "S3", "S4", "S5", "S5b", "S6"]},
+    "status": {"enum": ["READY", "BLOCKED", "NEEDS_REVIEW", "FAILED"]},
+    "current_files": {"type": "array", "items": {"type": "string"}},
+    "latest_reports": {"type": "array", "items": {"type": "string"}},
+    "next_action": {"type": "string", "minLength": 1},
+    "approval": {"enum": ["NONE", "AUTHOR_PENDING", "AUTHOR_APPROVED", "AUTHOR_REJECTED"]},
+    "preserved_risks": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

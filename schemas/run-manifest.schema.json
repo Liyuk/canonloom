@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/run-manifest.schema.json",
+  "title": "CanonLoom Run Manifest",
+  "type": "object",
+  "required": ["schema_version", "run_id", "work_id", "started_at", "status", "metrics", "events"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "run_id": {"type": "string"},
+    "work_id": {"type": "string"},
+    "started_at": {"type": "string"},
+    "status": {"enum": ["RUNNING", "COMPLETED", "FAILED"]},
+    "start_stage": {"type": "string"},
+    "reason": {"type": "string"},
+    "mode": {"type": "string"},
+    "strategy": {"type": "string"},
+    "metrics": {"type": "object"},
+    "events": {"type": "array"}
+  },
+  "additionalProperties": true
+}

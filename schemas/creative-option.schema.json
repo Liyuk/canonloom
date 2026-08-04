@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/creative-option.schema.json",
+  "title": "CanonLoom Creative Option",
+  "type": "object",
+  "required": ["option_id", "work_id", "summary", "beats", "canon_dependencies", "risks"],
+  "properties": {
+    "option_id": {"type": "string", "minLength": 1},
+    "work_id": {"type": "string", "minLength": 1},
+    "persona": {"type": "string"},
+    "summary": {"type": "string", "minLength": 1},
+    "beats": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "intended_reader_effect": {"type": "string"},
+    "canon_dependencies": {"type": "array", "items": {"type": "string"}},
+    "new_assumptions": {"type": "array", "items": {"type": "string"}},
+    "risks": {"type": "array", "items": {"type": "string"}},
+    "open_questions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

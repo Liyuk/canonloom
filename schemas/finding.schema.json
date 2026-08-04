@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/finding.schema.json",
+  "title": "CanonLoom Review Finding",
+  "type": "object",
+  "required": ["id", "severity", "category", "location", "evidence", "issue", "fix", "status"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["BLOCKER", "MAJOR", "MINOR", "ADVISORY"]},
+    "category": {"enum": ["structure", "character", "prose", "continuity", "causal", "canon", "information", "format", "reader_promise"]},
+    "location": {"type": "string", "minLength": 1},
+    "evidence": {"type": "string", "minLength": 1},
+    "issue": {"type": "string", "minLength": 1},
+    "fix": {"type": "string", "minLength": 1},
+    "status": {"enum": ["open", "fixed", "accepted_risk", "pending_decision", "rejected"]},
+    "source_refs": {"type": "array", "items": {"type": "string"}}
+    ,"adapter_warning": {"type": "boolean"},
+    "source_tool": {"type": "string"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/author-decision.schema.json",
+  "title": "CanonLoom Author Decision",
+  "type": "object",
+  "required": ["decision_id", "work_id", "action", "selected_options", "rationale", "approval"],
+  "properties": {
+    "decision_id": {"type": "string", "minLength": 1},
+    "work_id": {"type": "string", "minLength": 1},
+    "action": {"enum": ["select", "merge", "edit", "reject", "defer", "approve_settlement"]},
+    "selected_options": {"type": "array", "items": {"type": "string"}},
+    "rationale": {"type": "string", "minLength": 1},
+    "approval": {"enum": ["NONE", "AUTHOR_PENDING", "AUTHOR_APPROVED", "AUTHOR_REJECTED"]},
+    "approved_at": {"type": "string"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

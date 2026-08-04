@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/chapter-contract.schema.json",
+  "title": "CanonLoom Chapter Contract",
+  "type": "object",
+  "required": ["id", "objective", "viewpoint", "time", "location", "required_changes", "exit_state"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "viewpoint": {"type": "string", "minLength": 1},
+    "time": {"type": "string", "minLength": 1},
+    "location": {"type": "string", "minLength": 1},
+    "required_changes": {"type": "array", "items": {"type": "string"}},
+    "forbidden_changes": {"type": "array", "items": {"type": "string"}},
+    "exit_state": {"type": "string", "minLength": 1},
+    "open_questions": {"type": "array", "items": {"type": "string"}},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "status": {"type": "string"},
+    "beats": {"type": "array", "items": {"type": ["string", "object"]}},
+    "current_reader_question": {"type": "string"},
+    "lu_zhao_choice": {"type": "string"},
+    "visible_cost": {"type": "string"},
+    "ending_consequence": {"type": "string"},
+    "word_target_min": {"type": "integer", "minimum": 0},
+    "word_target_max": {"type": "integer", "minimum": 0},
+    "min_chars": {"type": "integer", "minimum": 0},
+    "max_chars": {"type": "integer", "minimum": 0},
+    "forbidden_terms": {"type": "array", "items": {"type": "string"}},
+    "forbidden_punctuation": {"type": "array", "items": {"type": "string"}},
+    "dialogue_ratio_min": {"type": "number", "minimum": 0, "maximum": 1},
+    "dialogue_ratio_max": {"type": "number", "minimum": 0, "maximum": 1},
+    "engine": {"type": "string"}
+    ,"style_profile_ref": {"type": "string"}
+  },
+  "additionalProperties": false
+}

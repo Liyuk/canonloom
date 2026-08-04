@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "project_title": "",
+  "language": "zh-CN",
+  "genre": "",
+  "subgenres": [],
+  "audience": "",
+  "pov": "",
+  "tense": "",
+  "tone": [],
+  "content_boundaries": [],
+  "chapter_length": {"min_cjk": null, "max_cjk": null},
+  "dialogue_ratio": {"min": null, "max": null},
+  "automation_mode": "standard",
+  "review_profile": "standard",
+  "author_notes": "",
+  "author_confirmed": false,
+  "confirmed_at": null
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/author-setup.schema.json",
+  "title": "CanonLoom Author Setup",
+  "type": "object",
+  "required": ["schema_version", "project_title", "author_confirmed"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "project_title": {"type": "string", "minLength": 1},
+    "language": {"type": "string"},
+    "genre": {"type": "string"},
+    "subgenres": {"type": "array", "items": {"type": "string"}},
+    "audience": {"type": "string"},
+    "pov": {"type": "string"},
+    "tense": {"type": "string"},
+    "tone": {"type": "array", "items": {"type": "string"}},
+    "content_boundaries": {"type": "array", "items": {"type": "string"}},
+    "chapter_length": {"type": "object", "properties": {"min_cjk": {"type": ["integer", "null"]}, "max_cjk": {"type": ["integer", "null"]}}, "additionalProperties": false},
+    "dialogue_ratio": {"type": "object", "properties": {"min": {"type": ["number", "null"]}, "max": {"type": ["number", "null"]}}, "additionalProperties": false},
+    "automation_mode": {"enum": ["economy", "standard", "deep"]},
+    "review_profile": {"enum": ["light", "standard", "deep"]},
+    "author_notes": {"type": "string"},
+    "author_confirmed": {"type": "boolean"},
+    "confirmed_at": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

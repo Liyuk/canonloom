@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/project-config.schema.json",
+  "title": "CanonLoom Project Config",
+  "type": "object",
+  "required": ["schema_version", "project_id", "phase", "mode", "next_action"],
+  "properties": {
+    "schema_version": {"const": "0.2"},
+    "project_id": {"type": "string", "minLength": 1},
+    "phase": {"enum": ["uninitialized", "idea", "analysis", "import", "planning", "production", "review", "settlement"]},
+    "mode": {"enum": ["economy", "standard", "deep"]},
+    "work_id": {"type": ["string", "null"]},
+    "stage_id": {"type": ["string", "null"]},
+    "next_action": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "minLength": 1},
+    "run_id": {"type": ["string", "null"]},
+    "run_path": {"type": ["string", "null"]},
+    "workflow": {"type": "object"},
+    "quality": {"type": "object"},
+    "context": {"type": "object"},
+    "style_profile": {"type": "object"},
+    "language_policy": {"type": "object"},
+    "runtime": {"type": "object"},
+    "budget": {"type": "object"}
+  },
+  "additionalProperties": false
+}

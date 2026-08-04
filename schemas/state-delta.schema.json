@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/state-delta.schema.json",
+  "title": "CanonLoom State Delta",
+  "type": "object",
+  "required": ["id", "source_ref", "status", "changes"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "source_ref": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "approved", "rejected", "deferred"]},
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "operation", "value"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "operation": {"enum": ["add", "replace", "remove"]},
+          "value": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "reviewed_by": {"type": "string"},
+    "reviewed_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

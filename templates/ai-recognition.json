@@ -1,0 +1,12 @@
+{
+  "schema_version": "0.1",
+  "status": "PENDING",
+  "source_refs": [],
+  "extracted": {},
+  "inferred_style_profile": {},
+  "inferred_constraints": [],
+  "unresolved_questions": ["项目的核心冲突是什么？", "哪些内容是作者确认的事实？", "哪些参考材料只允许提取高层技法？"],
+  "confidence": {},
+  "author_decisions": [],
+  "recognized_at": null
+}

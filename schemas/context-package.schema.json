@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/context-package.schema.json",
+  "title": "CanonLoom Context Package",
+  "type": "object",
+  "required": ["schema_version", "context_id", "work_id", "included_files", "selection_reason", "compiled_at", "included_sources", "provenance"],
+  "properties": {
+    "schema_version": {"const": "0.2"},
+    "context_id": {"type": "string", "minLength": 1},
+    "work_id": {"type": "string", "minLength": 1},
+    "included_files": {"type": "array", "items": {"type": "string"}},
+    "excluded_files": {"type": "array", "items": {"type": "string"}},
+    "selection_reason": {"type": "string", "minLength": 1},
+    "compiled_at": {"type": "string", "minLength": 1},
+    "source_versions": {"type": "object", "additionalProperties": {"type": "string"}}
+    ,"contract_ref": {"type": "string"},
+    "style_profile_ref": {"type": "string"},
+    "selection": {"type": "object"},
+    "contract": {"type": "object"},
+    "included_sources": {"type": "array", "items": {"type": "object"}},
+    "provenance": {"type": "array", "items": {"type": "object"}},
+    "retrieval_policy": {"type": "string"}
+  },
+  "additionalProperties": false
+}

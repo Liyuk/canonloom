@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "profile_id": "default",
+  "name": "Project Style Profile",
+  "description": "Project-specific prose constraints. Literary judgment remains human/agent-owned.",
+  "narrative": {
+    "viewpoint": "project-defined",
+    "distance": "project-defined",
+    "tense": "project-defined",
+    "register": "project-defined",
+    "voice_keywords": [],
+    "avoid_tendencies": []
+  },
+  "rhythm": {
+    "min_avg_sentence_cjk": null,
+    "max_avg_sentence_cjk": null,
+    "min_avg_paragraph_cjk": null,
+    "max_avg_paragraph_cjk": null,
+    "max_long_sentence_cjk": null
+  },
+  "dialogue": {
+    "min_ratio": null,
+    "max_ratio": null,
+    "dialogue_must_change": true
+  },
+  "surface": {
+    "forbidden_terms": [],
+    "forbidden_punctuation": [],
+    "required_patterns": []
+  },
+  "review_questions": []
+}

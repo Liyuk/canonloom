@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/ai-recognition.schema.json",
+  "title": "CanonLoom AI Recognition Proposal",
+  "type": "object",
+  "required": ["schema_version", "status", "source_refs", "extracted", "unresolved_questions"],
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "status": {"enum": ["PENDING", "PROPOSED", "AUTHOR_CONFIRMED", "REJECTED"]},
+    "source_refs": {"type": "array", "items": {"type": "string"}},
+    "extracted": {"type": "object", "additionalProperties": true},
+    "inferred_style_profile": {"type": "object", "additionalProperties": true},
+    "inferred_constraints": {"type": "array", "items": {"type": "object"}},
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+    "confidence": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}},
+    "author_decisions": {"type": "array", "items": {"type": "object"}},
+    "recognized_at": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
