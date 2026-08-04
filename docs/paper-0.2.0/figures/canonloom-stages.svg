@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="500" viewBox="0 0 1600 500" role="img" aria-labelledby="title desc">
+  <title id="title">CanonLoom S0 to S6 production stages</title>
+  <desc id="desc">The implemented workflow moves from a contract gate through drafting, quick check, repair, strict check, independent review, cross-validation and author-approved settlement. Failed review returns to repair or an earlier decision boundary.</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC",sans-serif;fill:#172033}
+      .prep{fill:#f7f8fa;stroke:#27364b;stroke-width:2;rx:10}.gate{fill:#fff4df;stroke:#b87900;stroke-width:2;rx:10}.final{fill:#e9f7ef;stroke:#218739;stroke-width:2;rx:10}
+      .title{font-size:18px;font-weight:700}.small{font-size:14px}.arrow{stroke:#53657d;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.loop{stroke:#b87900;stroke-width:2.5;fill:none;stroke-dasharray:7 6;marker-end:url(#loopArrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#53657d"/></marker>
+    <marker id="loopArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b87900"/></marker>
+  </defs>
+  <rect width="1500" height="500" fill="#fff"/>
+  <text x="800" y="38" text-anchor="middle" class="title">S0–S6：阶段产物、门禁与可恢复修复</text>
+  <g transform="translate(25,95)">
+    <rect width="150" height="115" class="gate"/><text x="75" y="32" text-anchor="middle" class="title">S0</text><text x="75" y="61" text-anchor="middle" class="small">Contract Gate</text><text x="75" y="84" text-anchor="middle" class="small">契约 / 选择 / 上下文</text>
+    <rect x="195" width="150" height="115" class="prep"/><text x="270" y="32" text-anchor="middle" class="title">S1</text><text x="270" y="61" text-anchor="middle" class="small">Draft</text><text x="270" y="84" text-anchor="middle" class="small">候选正文</text>
+    <rect x="390" width="150" height="115" class="gate"/><text x="465" y="32" text-anchor="middle" class="title">S2</text><text x="465" y="61" text-anchor="middle" class="small">Quick Check</text><text x="465" y="84" text-anchor="middle" class="small">确定性发现</text>
+    <rect x="585" width="150" height="115" class="prep"/><text x="660" y="32" text-anchor="middle" class="title">S3</text><text x="660" y="61" text-anchor="middle" class="small">Repair</text><text x="660" y="84" text-anchor="middle" class="small">受限修订</text>
+    <rect x="780" width="150" height="115" class="gate"/><text x="855" y="32" text-anchor="middle" class="title">S4</text><text x="855" y="61" text-anchor="middle" class="small">Strict Check</text><text x="855" y="84" text-anchor="middle" class="small">严格审查</text>
+    <rect x="975" width="150" height="115" class="gate"/><text x="1050" y="32" text-anchor="middle" class="title">S5</text><text x="1050" y="61" text-anchor="middle" class="small">Independent</text><text x="1050" y="84" text-anchor="middle" class="small">独立审查</text>
+    <rect x="1170" width="150" height="115" class="gate"/><text x="1245" y="32" text-anchor="middle" class="title">S5b</text><text x="1245" y="61" text-anchor="middle" class="small">Cross-Validation</text><text x="1245" y="84" text-anchor="middle" class="small">报告交叉验证</text>
+    <rect x="1365" width="150" height="115" class="final"/><text x="1440" y="32" text-anchor="middle" class="title">S6</text><text x="1440" y="61" text-anchor="middle" class="small">Settlement</text><text x="1440" y="84" text-anchor="middle" class="small">作者批准结算</text>
+    <path d="M150 57 H195 M345 57 H390 M540 57 H585 M735 57 H780 M930 57 H975 M1125 57 H1170 M1320 57 H1365" class="arrow"/>
+  </g>
+  <path d="M465 225 V300 H660 V225" class="loop"/>
+  <path d="M855 225 C855 350 660 385 660 225" class="loop"/>
+  <text x="700" y="385" text-anchor="middle" class="small">Major / Blocker：回到 S3 修复或人工决策</text>
+  <text x="800" y="465" text-anchor="middle" class="small">S6 只结算已批准正文；叙事状态变化仍以独立 delta 经作者确认后晋升</text>
+</svg>

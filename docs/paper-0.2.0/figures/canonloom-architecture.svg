@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">CanonLoom 0.2.0 architecture</title>
+  <desc id="desc">Author intent is refined into a plan and selected option. Canon and optional narrative state feed a bounded context package, which produces a draft, evidence-backed review and author-approved settlement. Python handles deterministic checks and records; an agent handles creative and literary judgment.</desc>
+  <defs>
+    <style>
+      .box{fill:#f7f8fa;stroke:#27364b;stroke-width:2;rx:12}.state{fill:#e8f3ff;stroke:#1f6feb;stroke-width:2;rx:12}.review{fill:#fff4df;stroke:#b87900;stroke-width:2;rx:12}.settle{fill:#e9f7ef;stroke:#218739;stroke-width:2;rx:12}
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC",sans-serif;fill:#172033}.label{font-size:20px;font-weight:700}.small{font-size:15px}.arrow{stroke:#53657d;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dashed{stroke:#1f6feb;stroke-width:2.2;fill:none;stroke-dasharray:7 6;marker-end:url(#blueArrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#53657d"/></marker>
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6feb"/></marker>
+  </defs>
+  <rect width="1200" height="650" fill="#fff"/>
+  <text x="600" y="42" text-anchor="middle" class="label">CanonLoom 0.2.0：从创作意图到可审计结算</text>
+  <rect x="55" y="90" width="190" height="90" class="box"/><text x="150" y="123" text-anchor="middle" class="label">作者意图</text><text x="150" y="150" text-anchor="middle" class="small">intent / boundaries</text>
+  <rect x="300" y="90" width="190" height="90" class="box"/><text x="395" y="123" text-anchor="middle" class="label">层级规划</text><text x="395" y="150" text-anchor="middle" class="small">project → arc → contract</text>
+  <rect x="545" y="90" width="190" height="90" class="box"/><text x="640" y="123" text-anchor="middle" class="label">作者选择</text><text x="640" y="150" text-anchor="middle" class="small">option + rationale</text>
+  <path d="M245 135 H300 M490 135 H545" class="arrow"/>
+  <rect x="790" y="90" width="190" height="90" class="state"/><text x="885" y="123" text-anchor="middle" class="label">正式事实</text><text x="885" y="150" text-anchor="middle" class="small">canon / approved sources</text>
+
+  <rect x="55" y="260" width="210" height="105" class="state"/><text x="160" y="296" text-anchor="middle" class="label">叙事状态</text><text x="160" y="324" text-anchor="middle" class="small">events / knowledge / reveals</text><text x="160" y="347" text-anchor="middle" class="small">optional, proposed first</text>
+  <rect x="330" y="260" width="240" height="105" class="state"/><text x="450" y="296" text-anchor="middle" class="label">受限上下文</text><text x="450" y="324" text-anchor="middle" class="small">selection + provenance</text><text x="450" y="347" text-anchor="middle" class="small">SHA-256 source versions</text>
+  <rect x="635" y="260" width="220" height="105" class="box"/><text x="745" y="296" text-anchor="middle" class="label">候选草稿</text><text x="745" y="324" text-anchor="middle" class="small">beats → scenes → prose</text><text x="745" y="347" text-anchor="middle" class="small">draft ≠ canon</text>
+  <rect x="920" y="260" width="225" height="105" class="review"/><text x="1032" y="296" text-anchor="middle" class="label">证据审查</text><text x="1032" y="324" text-anchor="middle" class="small">finding → repair</text><text x="1032" y="347" text-anchor="middle" class="small">structure / continuity / style</text>
+
+  <path d="M160 365 V410 H450 V365" class="dashed"/>
+  <path d="M885 180 V220 H450 V260 M640 180 V220 H450 V260 M450 365 H635 M855 312 H920" class="arrow"/>
+  <rect x="365" y="475" width="250" height="100" class="review"/><text x="490" y="510" text-anchor="middle" class="label">S0–S5b 门禁</text><text x="490" y="538" text-anchor="middle" class="small">顺序 / 协议 / provenance</text><text x="490" y="560" text-anchor="middle" class="small">失败可回退</text>
+  <rect x="685" y="475" width="250" height="100" class="settle"/><text x="810" y="510" text-anchor="middle" class="label">作者批准结算</text><text x="810" y="538" text-anchor="middle" class="small">manuscript + settlement trace</text><text x="810" y="560" text-anchor="middle" class="small">state delta 仍需批准</text>
+  <path d="M745 365 V420 H490 V475 M1032 365 V420 H810 V475 M615 525 H685" class="arrow"/>
+  <text x="600" y="625" text-anchor="middle" class="small">Python：确定性检查、索引、记录与门禁；Agent：创作、解释与文学判断</text>
+</svg>

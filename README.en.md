@@ -4,7 +4,7 @@
 
 [中文 README](README.md)
 
-Version: `0.2.0` · [Changelog](CHANGELOG.md)
+Version: `0.2.1` · [Changelog](CHANGELOG.md)
 
 CanonLoom is not a GUI writing application and not a black box that claims to generate an entire novel from one prompt. It turns novel production into inspectable, resumable tasks: ideation, reference analysis, planning, chapter contracts, beats, bounded context, drafting, revision, review, and settlement.
 
@@ -182,11 +182,15 @@ git diff --check
 - [Benchmark and comparison notes](docs/en/benchmark.md)
 - [Narrative state](docs/en/narrative-state.md)
 - [Community and paper review](docs/research-review.md)
+- [0.2.0 paper outline](docs/paper-0.2.0/outline.md)
+- [0.2.0 full paper draft](docs/paper-0.2.0/paper.md)
 - [Iteration roadmap](docs/iteration-roadmap.md)
 
 ## Scope
 
 CanonLoom provides executable workflow conventions, file protocols, validators, gates, and audit traces. Model calls, literary judgment, and final canon approval remain the responsibility of the connected agent and the author.
+
+This is not an AI-removal project; it is an AI-decoupling project. The agent handles ideation, planning, writing, and explanation; Python handles deterministic validation, stage transitions, provenance, and audit records; the author owns durable configuration, selection, and final approval. AI output remains a candidate or finding until explicitly approved.
 
 ## License
 

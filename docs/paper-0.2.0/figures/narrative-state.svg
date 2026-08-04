@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">CanonLoom narrative state layer</title>
+  <desc id="desc">A draft or manuscript is analyzed into three parallel narrative state views: events, knowledge and reveals. All three are validated with schema and provenance checks before an author decides whether a proposed state change is confirmed or retained as a proposal.</desc>
+  <defs>
+    <style>
+      text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC",sans-serif;fill:#172033}
+      .box{fill:#e8f3ff;stroke:#1f6feb;stroke-width:2;rx:12}.source{fill:#f7f8fa;stroke:#27364b;stroke-width:2;rx:12}.decision{fill:#e9f7ef;stroke:#218739;stroke-width:2;rx:12}.small{font-size:15px}.title{font-size:20px;font-weight:700}.arrow{stroke:#53657d;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#53657d"/></marker>
+  </defs>
+  <rect width="1200" height="520" fill="#fff"/>
+  <text x="600" y="40" text-anchor="middle" class="title">Narrative State：让故事变化具有来源和可见状态</text>
+
+  <rect x="45" y="190" width="220" height="125" class="source"/>
+  <text x="155" y="230" text-anchor="middle" class="title">章节正文</text>
+  <text x="155" y="258" text-anchor="middle" class="small">draft / manuscript</text>
+  <text x="155" y="282" text-anchor="middle" class="small">source_ref + hash</text>
+
+  <rect x="350" y="75" width="220" height="90" class="box"/>
+  <text x="460" y="112" text-anchor="middle" class="title">Events</text>
+  <text x="460" y="140" text-anchor="middle" class="small">谁做了什么</text>
+  <rect x="350" y="205" width="220" height="90" class="box"/>
+  <text x="460" y="242" text-anchor="middle" class="title">Knowledge</text>
+  <text x="460" y="270" text-anchor="middle" class="small">谁知道什么</text>
+  <rect x="350" y="335" width="220" height="90" class="box"/>
+  <text x="460" y="372" text-anchor="middle" class="title">Reveals</text>
+  <text x="460" y="400" text-anchor="middle" class="small">谁何时知道</text>
+
+  <path d="M265 220 H305 V120 H350" class="arrow"/>
+  <path d="M265 252 H350" class="arrow"/>
+  <path d="M265 285 H305 V380 H350" class="arrow"/>
+
+  <rect x="680" y="155" width="225" height="190" class="source"/>
+  <text x="792" y="198" text-anchor="middle" class="title">State validator</text>
+  <text x="792" y="230" text-anchor="middle" class="small">schema / ID / status</text>
+  <text x="792" y="256" text-anchor="middle" class="small">source / provenance</text>
+  <text x="792" y="282" text-anchor="middle" class="small">时间 / 视角 / 权限</text>
+
+  <path d="M570 120 H625 V205 H680" class="arrow"/>
+  <path d="M570 250 H680" class="arrow"/>
+  <path d="M570 380 H625 V295 H680" class="arrow"/>
+
+  <rect x="1010" y="175" width="145" height="150" class="decision"/>
+  <text x="1082" y="215" text-anchor="middle" class="title">作者决策</text>
+  <text x="1082" y="248" text-anchor="middle" class="small">CONFIRMED</text>
+  <text x="1082" y="275" text-anchor="middle" class="small">或保留</text>
+  <text x="1082" y="302" text-anchor="middle" class="small">proposal</text>
+  <path d="M905 250 H1010" class="arrow"/>
+
+  <text x="600" y="475" text-anchor="middle" class="small">三类状态是并列视图；PROPOSED ≠ CONFIRMED ≠ canon，状态层默认可选</text>
+</svg>

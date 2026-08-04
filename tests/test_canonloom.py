@@ -203,7 +203,8 @@ class CanonLoomCliTests(unittest.TestCase):
     def test_version_and_english_task_output(self):
         version = subprocess.run([sys.executable, str(CLI), "--version"], text=True, capture_output=True)
         self.assertEqual(version.returncode, 0)
-        self.assertIn("canonloom 0.2.0", version.stdout)
+        expected_version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        self.assertIn(f"canonloom {expected_version}", version.stdout)
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "story"
             result = subprocess.run([sys.executable, str(CLI), "init", str(project), "--name", "English Story", "--language", "en-US", "--genre", "mystery", "--audience", "adult", "--pov", "close-third"], text=True, capture_output=True)

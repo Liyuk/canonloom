@@ -28,6 +28,8 @@ The following documents are currently maintained in one primary language because
 - [Direct reference comparison](direct-reference-comparison.md) — 中文
 - [Landscape](landscape.md) — 中文
 - [Community and paper review](research-review.md) — 中文
+- [CanonLoom 0.2.0 论文目录](paper-0.2.0/outline.md) — 中文
+- [CanonLoom 0.2.0 完整论文初稿](paper-0.2.0/paper.md) — 中文
 - [Iteration roadmap](iteration-roadmap.md) — 中文
 
 When a document becomes part of the normal user path, add its counterpart under `docs/en/` rather than translating internal research notes by default.

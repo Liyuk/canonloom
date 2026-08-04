@@ -4,7 +4,7 @@
 
 [English README](README.en.md)
 
-版本：`0.2.0` · [变更记录](CHANGELOG.md)
+版本：`0.2.1` · [变更记录](CHANGELOG.md)
 
 CanonLoom 不是 GUI 写作软件，也不是“一句话自动生成整本小说”的黑箱。它把小说生产拆成一组可恢复、可检查、可交接的任务：创意、拆书、规划、章契、Beat、上下文编译、生成、修订、审查和结算。
 
@@ -213,11 +213,15 @@ benchmark 文档区分三类数字：
 - [Schemas](schemas/)
 - [叙事状态层](docs/narrative-state.md)
 - [社区项目与论文评审](docs/research-review.md)
+- [0.2.0 论文结构](docs/paper-0.2.0/outline.md)
+- [0.2.0 完整论文初稿](docs/paper-0.2.0/paper.md)
 - [迭代路线与 P2 方案](docs/iteration-roadmap.md)
 
 ## 项目边界
 
 CanonLoom 提供可执行的流程、文件协议、检查器、门禁和审计轨迹；模型调用、文学判断和最终 canon 批准仍由连接的 Agent 与作者负责。
+
+这不是“去 AI 化”项目，而是“AI 解耦”项目：Agent 负责创意、规划、写作和解释；Python 负责确定性校验、阶段迁移、来源追踪和审计；作者负责正式配置、选择和最终批准。AI 输出默认是候选或 Finding，不会自动成为 canon。
 
 ## 对外使用前检查
 
