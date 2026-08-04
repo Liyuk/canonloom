@@ -10,20 +10,28 @@ Requirements: Python 3.9+. No third-party packages are required.
 git clone <your-canonloom-repo>
 cd canonloom
 ./bin/canonloom init ~/my-novel --name "My Novel" --language en-US
-cd ~/my-novel
-./bin/canonloom setup
-./bin/canonloom setup --confirm
-./bin/canonloom idea
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel setup --confirm
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
 ```
 
 The four daily commands are:
 
 ```sh
-./bin/canonloom status
-./bin/canonloom continue
-./bin/canonloom diagnose
-./bin/canonloom repair
+./bin/canonloom --root ~/my-novel status
+./bin/canonloom --root ~/my-novel continue
+./bin/canonloom --root ~/my-novel diagnose
+./bin/canonloom --root ~/my-novel repair
+```
+
+The CLI has three practical surfaces: author commands, agent/review commands, and maintainer commands. Authors can run `canonloom advanced` to inspect the latter without needing to learn them for daily writing.
+
+For optional event, knowledge, and reveal tracking:
+
+```sh
+./bin/canonloom --root ~/my-novel state report
+./bin/canonloom --root ~/my-novel state validate
 ```
 
 ## Command groups

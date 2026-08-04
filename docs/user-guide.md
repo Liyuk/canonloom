@@ -5,16 +5,15 @@ CanonLoom 是本地文件工作流。作者发出简单指令，Agent 读取任�
 ## 最小日常循环
 
 ```sh
-./bin/canonloom status
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel status
+./bin/canonloom --root ~/my-novel continue
 ```
 
 如果是新项目：
 
 ```sh
 ./bin/canonloom init ~/my-novel --name "My Novel"
-cd ~/my-novel
-./bin/canonloom idea
+./bin/canonloom --root ~/my-novel idea
 ```
 
 ## 从创意到章节
@@ -34,17 +33,17 @@ continue + gate S0...S6
 具体命令：
 
 ```sh
-./bin/canonloom idea --input "我想写一个关于选择的长篇故事"
-./bin/canonloom reference --input "分析参考作品的结构和节奏"
-./bin/canonloom import --input "盘点已有稿件，不要晋升为 canon"
-./bin/canonloom planning --work-id volume-001
-./bin/canonloom work --work-id chapter-001
-./bin/canonloom characters --input "校准本卷主要人物的目标和关系"
-./bin/canonloom world --input "推演当前规则下的三个事件分支"
-./bin/canonloom research --input "核验这一段现实资料及其使用边界"
-./bin/canonloom revision --work-id chapter-001
-./bin/canonloom review --work-id chapter-001
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel idea --input "我想写一个关于选择的长篇故事"
+./bin/canonloom --root ~/my-novel reference --input "分析参考作品的结构和节奏"
+./bin/canonloom --root ~/my-novel import --input "盘点已有稿件，不要晋升为 canon"
+./bin/canonloom --root ~/my-novel planning --work-id volume-001
+./bin/canonloom --root ~/my-novel work --work-id chapter-001
+./bin/canonloom --root ~/my-novel characters --input "校准本卷主要人物的目标和关系"
+./bin/canonloom --root ~/my-novel world --input "推演当前规则下的三个事件分支"
+./bin/canonloom --root ~/my-novel research --input "核验这一段现实资料及其使用边界"
+./bin/canonloom --root ~/my-novel revision --work-id chapter-001
+./bin/canonloom --root ~/my-novel review --work-id chapter-001
+./bin/canonloom --root ~/my-novel continue
 ```
 
 每个开始命令都会更新 `canonloom.json` 并生成 `tasks/current.md`。Agent 应先读取这两个文件，再执行任务。
@@ -64,10 +63,10 @@ continue + gate S0...S6
 ## 出问题时
 
 ```sh
-./bin/canonloom diagnose
-./bin/canonloom diagnose --json
-./bin/canonloom repair --dry-run
-./bin/canonloom repair
+./bin/canonloom --root ~/my-novel diagnose
+./bin/canonloom --root ~/my-novel diagnose --json
+./bin/canonloom --root ~/my-novel repair --dry-run
+./bin/canonloom --root ~/my-novel repair
 ```
 
 `repair` 只修复缺目录、缺配置字段和缺失任务文件，并在 `logs/repairs/` 留痕。内容冲突、事实错误、审查失败和作者决策不会被自动处理。

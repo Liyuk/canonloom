@@ -25,7 +25,7 @@ Evidence Report ─── Finding → evidence → severity → repair
     ↓
 Decision Gate ───── Author approves, revises, or defers
     ↓
-State Settlement ── Canon / active memory / draft memory / open issue
+State Settlement ── settlement trace / proposed delta / open issue
 ```
 
 ## Components
@@ -52,7 +52,7 @@ The author selects, combines, edits, or rejects options. The selected option bec
 
 ### 6. Context compiler
 
-Retrieves only the evidence required for the selected task: relevant entities, rules, timeline window, previous exit state, unresolved threads, and style constraints. It records what was included and why.
+Builds a bounded, versioned evidence package from selected canon, workflow state, narrative state, and style constraints. It records what was included and why; deeper relevance filtering remains a later iteration.
 
 ### 7. Generator
 
@@ -64,7 +64,7 @@ Reviewers are separated by concern: structure and causality, continuity and prov
 
 ### 9. State settlement
 
-Turns an approved draft into explicit deltas. A delta can update current state, create a candidate memory, close an issue, or remain deferred. Settlement is immutable and traceable.
+Turns an approved draft into an immutable settlement trace and explicit proposed deltas. The current implementation promotes approved prose to `manuscript/` and records state-promotion decisions; narrative state remains separately reviewable until an author approves a specific delta.
 
 ## Hard boundaries
 

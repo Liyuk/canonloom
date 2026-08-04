@@ -58,6 +58,8 @@ python3 scripts/canonloom_check.py transition S0 S1
 python3 scripts/canonloom_check.py boundary S1 drafts/chapter-001.md traces/S1.json
 ```
 
+`canonloom_check.py` is a low-level maintainer/adapter checker. It is not part of the normal author path; use `canonloom advanced` to discover the supported advanced surface.
+
 The checker is a guardrail, not a substitute for literary review. A passing mechanical check never approves a draft.
 
 The generic production tools are available to both runtimes through the same CLI: chapter validation, Beat validation, context compilation, chapter indexing, retrieval, cross-validation, style metrics, statistics, and repair-plan generation. See [production-tools.md](production-tools.md).

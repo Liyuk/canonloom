@@ -82,6 +82,8 @@ def validate_chapter(chapter_path: Path, contract_path: Path | None = None, leve
     project_root = root or (contract_path.parent.parent.parent if contract_path else chapter_path.parent)
     style_path = project_root / "intent/style-profile.json"
     style = load_json(style_path, {}) if style_path.exists() else {}
+    project_config = load_json(project_root / "canonloom.json", {})
+    author_setup = load_json(project_root / "intent/author-setup.json", {})
     if not body.strip():
         findings.append(finding("BODY_EMPTY", "BLOCKER", "format", str(chapter_path), "", "正文为空", "补充正文后重新检查"))
     if "## 正文" in body:
@@ -90,15 +92,19 @@ def validate_chapter(chapter_path: Path, contract_path: Path | None = None, leve
     dialogue_matches = re.findall(r"“([^”]*)”|「([^」]*)」|『([^』]*)』", body)
     dialogue_text = "".join(part for match in dialogue_matches for part in match if part)
     dialogue_ratio = cjk_count(dialogue_text) / max(1, chars)
-    min_chars = int(contract.get("min_chars", contract.get("word_target_min", 0)) or 0)
-    max_chars = int(contract.get("max_chars", contract.get("word_target_max", 0)) or 0)
+    chapter_length = author_setup.get("chapter_length", {})
+    default_length = project_config.get("quality", {}).get("chapter_length", {})
+    min_chars = int(contract.get("min_chars", contract.get("word_target_min", chapter_length.get("min_cjk", default_length.get("min_cjk", 0)))) or 0)
+    max_chars = int(contract.get("max_chars", contract.get("word_target_max", chapter_length.get("max_cjk", default_length.get("max_cjk", 0)))) or 0)
     if min_chars and chars < min_chars:
         findings.append(finding("LENGTH_SHORT", "MAJOR", "format", str(chapter_path), f"CJK={chars}, minimum={min_chars}", "正文低于契约长度", "补足契约要求的内容"))
     if max_chars and chars > max_chars:
             findings.append(finding("LENGTH_LONG", "MAJOR", "format", str(chapter_path), f"CJK={chars}, maximum={max_chars}", "正文超过契约长度", "压缩或拆分超出的内容"))
     dialogue_policy = style.get("dialogue", {})
-    ratio_min = float(contract.get("dialogue_ratio_min", dialogue_policy.get("min_ratio", 0)) or 0)
-    ratio_max = float(contract.get("dialogue_ratio_max", dialogue_policy.get("max_ratio", 0)) or 0)
+    author_dialogue = author_setup.get("dialogue_ratio", {})
+    default_dialogue = project_config.get("quality", {}).get("dialogue_ratio", {})
+    ratio_min = float(contract.get("dialogue_ratio_min", author_dialogue.get("min", dialogue_policy.get("min_ratio", default_dialogue.get("min", 0)))) or 0)
+    ratio_max = float(contract.get("dialogue_ratio_max", author_dialogue.get("max", dialogue_policy.get("max_ratio", default_dialogue.get("max", 0)))) or 0)
     if ratio_max and dialogue_ratio > ratio_max:
         findings.append(finding("DIALOGUE_RATIO_HIGH", "MAJOR", "prose", str(chapter_path), f"dialogue_ratio={dialogue_ratio:.4f}, maximum={ratio_max:.4f}", "对白比例超过本章契约上限", "压缩重复确认，保留改变行动、关系或信息差的对白"))
     if ratio_min and dialogue_ratio < ratio_min:
@@ -218,7 +224,7 @@ def compile_context(root: Path, contract_path: Path, selection_path: Path | None
     style_policy = config.get("style_profile", {})
 
     def add_path(path: Path, reason: str, authority: str = "canon") -> None:
-        if not path.is_file() or path.suffix.lower() not in {".md", ".json", ".txt"}:
+        if not path.is_file() or path.suffix.lower() not in {".md", ".json", ".jsonl", ".txt"}:
             return
         relative = str(path.relative_to(root))
         if relative in seen:
@@ -238,6 +244,12 @@ def compile_context(root: Path, contract_path: Path, selection_path: Path | None
         handoff = root / "handoffs" / f"{work_id}.json"
         if handoff.exists():
             add_path(handoff, "current stage handoff", "workflow")
+    if context_policy.get("include_narrative_state", True) and config.get("narrative_state", {}).get("mode", "optional") != "disabled":
+        state_root = root / "memory/narrative-state"
+        for state_name in ("state-policy.json", "events.jsonl", "knowledge.jsonl", "reveals.json"):
+            state_path = state_root / state_name
+            if state_path.exists():
+                add_path(state_path, "narrative state relevant to current work", "state")
     if context_policy.get("include_previous_chapter") and selection.get("previous_chapter"):
         previous = root / selection["previous_chapter"]
         if previous.exists():

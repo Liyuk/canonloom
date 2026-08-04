@@ -19,7 +19,7 @@ CanonLoom 的初始化不是“创建目录后直接写正文”，而是先建�
 也可以在 init 时直接提供第一批作者输入：
 
 ```sh
-canonloom init ~/my-novel --name "海港谜案" \
+./bin/canonloom init ~/my-novel --name "Sample Story" \
   --genre "都市神秘" --audience "成人读者" \
   --pov close-third --tone "冷静,潮湿" \
   --chapter-min 3000 --chapter-max 7000
@@ -42,9 +42,9 @@ AI 识别结果只能是 `PENDING` 或 `PROPOSED`。只有作者审阅后，才�
 ## 推荐流程
 
 ```text
-canonloom init
+./bin/canonloom init
   ↓
-canonloom setup
+./bin/canonloom --root ~/my-novel setup
   ↓
 作者确认 author-setup
   ↓
@@ -60,7 +60,7 @@ idea → planning → contract → work
 作者确认配置后运行：
 
 ```sh
-canonloom setup --confirm
+./bin/canonloom --root ~/my-novel setup --confirm
 ```
 
 在确认之前，CanonLoom 不允许进入 planning、work、characters、world、research、revision 或 review；idea/reference 仍可用于探索和拆解。

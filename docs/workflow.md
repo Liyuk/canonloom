@@ -15,13 +15,15 @@
 
 ## C. Creative divergence
 
-For each contract, several specialized perspectives generate alternatives. A useful default set is:
+For each contract, one primary agent may generate several labeled perspectives. A useful review set is:
 
 - **Architect** — causal structure and downstream consequences.
 - **Character** — motivation, agency, and relationship pressure.
 - **Reader** — curiosity, clarity, and emotional movement.
 - **Style** — voice, scene texture, and restraint.
 - **Contrarian** — cliché, contradiction, pacing, and risk detection.
+
+These perspectives do not require multiple models or agents. Separate models are optional and should remain isolated review passes.
 
 Each option is a structured artifact:
 
@@ -57,14 +59,14 @@ Reviewers inspect the current draft against the contract and compiled evidence. 
 
 ## G. Settlement
 
-After approval, the system applies the accepted delta to the appropriate layer:
+After approval, the system writes the settlement trace and applies the approved prose to `manuscript/`. A state delta is promoted only when the author explicitly approves that delta:
 
 ```text
-canon/       confirmed, durable facts
-memory/active/   current working state
+canon/           confirmed, durable facts
+memory/active/   current working state, when separately approved
 memory/draft/    proposed facts awaiting review
 memory/archive/  superseded or historical material
-issues/      unresolved conflicts and questions
+issues/          unresolved conflicts and questions
 ```
 
 ## Two cooperating loops

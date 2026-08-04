@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/reveal.schema.json",
+  "title": "CanonLoom Reveal Tracking",
+  "type": "object",
+  "required": ["setup_id", "status", "reader_knows", "protagonist_knows"],
+  "properties": {
+    "setup_id": {"type": "string", "minLength": 1},
+    "introduced_in": {"type": "string"},
+    "expected_payoff": {"type": "string"},
+    "status": {"enum": ["OPEN", "PARTIAL", "PAID_OFF", "ABANDONED"]},
+    "reader_knows": {"type": "boolean"},
+    "protagonist_knows": {"type": "boolean"},
+    "allowed_reveal": {"enum": ["HIDDEN", "PARTIAL", "FULL"]},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "author_note": {"type": "string"}
+  },
+  "additionalProperties": false
+}

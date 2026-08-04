@@ -4,7 +4,7 @@
 
 [English README](README.en.md)
 
-版本：`0.1.0` · [变更记录](CHANGELOG.md)
+版本：`0.2.0` · [变更记录](CHANGELOG.md)
 
 CanonLoom 不是 GUI 写作软件，也不是“一句话自动生成整本小说”的黑箱。它把小说生产拆成一组可恢复、可检查、可交接的任务：创意、拆书、规划、章契、Beat、上下文编译、生成、修订、审查和结算。
 
@@ -50,7 +50,7 @@ draft → quick validation → repair plan
       ↓
 strict validation → independent review → optional cross-review
       ↓
-author approval → settlement → manuscript / active memory
+author approval → settlement → manuscript + state settlement trace
 ```
 
 强约束阶段为 S0–S6：
@@ -65,7 +65,7 @@ S4 Strict Check → S5 Independent Review → S5b Cross-Validation
 S6 Human-Approved Settlement
 ```
 
-阶段不能跳过。S6 没有作者批准文件时，系统不会把草稿晋升到 `manuscript/` 或 `memory/`。
+阶段不能跳过。S6 没有作者批准文件时，系统不会把草稿晋升到 `manuscript/`；叙事状态也不会自动晋升为 canon。
 
 ## 推荐运行方式：单一模型 + Python
 
@@ -87,10 +87,9 @@ git clone <your-canonloom-repo>
 cd canonloom
 
 ./bin/canonloom init ~/my-novel --name "My Novel"
-cd ~/my-novel
-./bin/canonloom setup
-./bin/canonloom idea
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
 ```
 
 `init` 之后先完成 setup：作者配置题材、受众、视角、文风方向和内容边界；Agent 再把已有材料识别成候选人物、世界、线索和技法。作者配置与 AI 识别分开保存，AI 推断不会自动进入 canon。
@@ -105,17 +104,21 @@ AI 识别提案 → intent/ai-recognition.json
 作者确认初始化配置：
 
 ```sh
-./bin/canonloom setup --confirm
+./bin/canonloom --root ~/my-novel setup --confirm
 ```
 
 作者日常最常用的命令：
 
 ```sh
-canonloom status       # 当前处于什么阶段？
-canonloom continue     # 按 next_action 继续
-canonloom diagnose     # 检查结构和状态
-canonloom repair       # 修复安全的结构问题
-canonloom --version    # 查看框架版本
+./bin/canonloom --root ~/my-novel status       # 当前处于什么阶段？
+./bin/canonloom --root ~/my-novel continue     # 按 next_action 继续
+./bin/canonloom --root ~/my-novel diagnose     # 检查结构和状态
+./bin/canonloom --root ~/my-novel repair       # 修复安全的结构问题
+./bin/canonloom --root ~/my-novel upgrade      # 将旧项目补齐到当前协议结构
+./bin/canonloom --version                      # 查看框架版本
+./bin/canonloom --root ~/my-novel state report # 汇总可选叙事状态
+./bin/canonloom --root ~/my-novel state validate # 校验事件、知识与揭示
+./bin/canonloom advanced                       # 查看 Agent/维护层工具
 ```
 
 最小示例可以直接运行：
@@ -127,20 +130,22 @@ examples/minimal-project/smoke.sh
 创作入口：
 
 ```sh
-canonloom setup      # 完成作者配置和 AI 识别入口
-canonloom idea         # 创意产生
-canonloom reference    # 拆书/分析参考作品
-canonloom import       # 导入已有稿件
-canonloom planning     # 项目 → 卷 → 篇章 → 章契 → Beat
-canonloom work         # 开始一个工作单元
-canonloom characters   # 人物校准
-canonloom world        # 世界规则推演
-canonloom research     # 资料核验
-canonloom revision     # 问题驱动修订
-canonloom review       # 审查
+./bin/canonloom --root ~/my-novel setup      # 完成作者配置和 AI 识别入口
+./bin/canonloom --root ~/my-novel idea         # 创意产生
+./bin/canonloom --root ~/my-novel reference    # 拆书/分析参考作品
+./bin/canonloom --root ~/my-novel import       # 导入已有稿件
+./bin/canonloom --root ~/my-novel planning     # 项目 → 卷 → 篇章 → 章契 → Beat
+./bin/canonloom --root ~/my-novel work         # 开始一个工作单元
+./bin/canonloom --root ~/my-novel characters   # 人物校准
+./bin/canonloom --root ~/my-novel world        # 世界规则推演
+./bin/canonloom --root ~/my-novel research     # 资料核验
+./bin/canonloom --root ~/my-novel revision     # 问题驱动修订
+./bin/canonloom --root ~/my-novel review       # 审查
 ```
 
 命令只负责准备可读的任务文件。Agent 读取 `tasks/current.md`，执行任务并把产物写入约定目录。
+
+普通作者不需要学习 `gate`、`context`、`handoff`、`artifact-check` 等内部工具。它们仍然存在，主要由 Agent 或维护者调用；运行 `canonloom advanced` 可以查看完整列表。
 
 ## 运行记录与自我修复
 
@@ -153,15 +158,15 @@ runs/<work-id>/<run-id>/manifest.json
 其中记录阶段、运行策略、工具调用、输入/输出 token、延迟、重试和事件。上下文包、章节索引也会记录来源文件的 SHA-256 指纹。
 
 ```sh
-canonloom retry S0 --work-id chapter-001 --reason "修订后重新验证"
-canonloom record --stage S2 --model my-model \
+./bin/canonloom --root ~/my-novel retry S0 --work-id chapter-001 --reason "修订后重新验证"
+./bin/canonloom --root ~/my-novel record --stage S2 --model my-model \
   --input-tokens 10000 --output-tokens 1500 \
   --latency-ms 4000 --retries 0
-canonloom handoff --work-id chapter-001 \
+./bin/canonloom --root ~/my-novel handoff --work-id chapter-001 \
   --source-stage S2 --next-action S3
 ```
 
-`diagnose → repair → diagnose` 只修复目录、配置字段、任务文件等安全结构问题，不会替作者改 canon、正文、审查结论或批准状态。
+`diagnose → repair → diagnose` 只修复目录、配置字段、任务文件等安全结构问题，不会替作者改 canon、正文、审查结论或批准状态。`upgrade` 是面向旧项目的显式入口，当前只执行同一组安全迁移。
 
 ## Codex、Claude 和其他 Agent
 
@@ -206,6 +211,9 @@ benchmark 文档区分三类数字：
 - [Style Profile 文风协议](docs/style-profile.md)
 - [竞品、token、耗时与 benchmark](docs/benchmark.md)
 - [Schemas](schemas/)
+- [叙事状态层](docs/narrative-state.md)
+- [社区项目与论文评审](docs/research-review.md)
+- [迭代路线与 P2 方案](docs/iteration-roadmap.md)
 
 ## 项目边界
 

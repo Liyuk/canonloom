@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canonloom.dev/schemas/knowledge-state.schema.json",
+  "title": "CanonLoom Knowledge State",
+  "type": "object",
+  "required": ["knowledge_id", "holder", "proposition", "status"],
+  "properties": {
+    "knowledge_id": {"type": "string", "minLength": 1},
+    "holder": {"type": "string", "minLength": 1},
+    "proposition": {"type": "string", "minLength": 1},
+    "acquired_in": {"type": "string"},
+    "source_ref": {"type": "string"},
+    "status": {"enum": ["PROPOSED", "CONFIRMED", "REJECTED"]},
+    "reveal_level": {"enum": ["HIDDEN", "PARTIAL", "PUBLIC"]}
+  },
+  "additionalProperties": false
+}

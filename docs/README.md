@@ -13,6 +13,7 @@ CanonLoom keeps machine protocols language-neutral and offers bilingual entry po
 | Runtime adapters | [Runtime Adapters](runtime-adapters.md) | [Runtime Adapters](runtime-adapters.md) |
 | Style Profile | [文风协议](style-profile.md) | [Style Profile](en/style-profile.md) |
 | Language policy | [Language Policy](language-policy.md) | [Language Policy](language-policy.md) |
+| Narrative state | [叙事状态层](narrative-state.md) | [Narrative State](en/narrative-state.md) |
 
 ## Reference and design documentation
 
@@ -26,5 +27,7 @@ The following documents are currently maintained in one primary language because
 - [Benchmark and comparison](benchmark.md) — [English summary](en/benchmark.md)
 - [Direct reference comparison](direct-reference-comparison.md) — 中文
 - [Landscape](landscape.md) — 中文
+- [Community and paper review](research-review.md) — 中文
+- [Iteration roadmap](iteration-roadmap.md) — 中文
 
 When a document becomes part of the normal user path, add its counterpart under `docs/en/` rather than translating internal research notes by default.

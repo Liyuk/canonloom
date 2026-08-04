@@ -12,19 +12,25 @@ CanonLoom 的核心接口是本地文件和命令，不是某个模型的隐藏�
 git clone <your-canonloom-repo>
 cd canonloom
 ./bin/canonloom init ~/my-novel --name "My Novel"
-cd ~/my-novel
-./bin/canonloom setup
-./bin/canonloom idea
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
 ```
 
 作者日常只需记住四个命令：
 
 ```sh
-./bin/canonloom status       # 我现在在哪里？
-./bin/canonloom continue     # 继续下一步
-./bin/canonloom diagnose     # 出了什么问题？
-./bin/canonloom repair       # 修复安全的结构问题
+./bin/canonloom --root ~/my-novel status       # 我现在在哪里？
+./bin/canonloom --root ~/my-novel continue     # 继续下一步
+./bin/canonloom --root ~/my-novel diagnose     # 出了什么问题？
+./bin/canonloom --root ~/my-novel repair       # 修复安全的结构问题
+```
+
+需要追踪事件、角色知识和伏笔时，可以使用可选状态层：
+
+```sh
+./bin/canonloom --root ~/my-novel state report
+./bin/canonloom --root ~/my-novel state validate
 ```
 
 ## CLI 命令表
@@ -44,6 +50,9 @@ cd ~/my-novel
 | `diagnose` | 检查项目结构和状态 | 只读 |
 | `repair` | 修复安全、可逆的结构问题 | 只改结构/任务/配置字段 |
 | `gate S0...S6` | 检查阶段产物和顺序 | 更新阶段状态 |
+| `advanced` | 查看 Agent/维护层命令 | 只读 |
+
+`validate`、`beats`、`context`、`handoff`、`gate`、`record` 和 `settle` 属于 Agent/维护层。作者通常只需要 `status`、`continue`、`diagnose`、`repair` 和创作入口。
 
 所有命令都支持：
 
@@ -75,12 +84,12 @@ diagnose → identify issue → repair safe items → diagnose again
 先预览再执行：
 
 ```sh
-./bin/canonloom repair --dry-run
-./bin/canonloom repair
-./bin/canonloom retry S0 --work-id chapter-001 --reason "修订后重新跑全流程"
-./bin/canonloom diagnose --json
-./bin/canonloom handoff --work-id chapter-001 --source-stage S2 --next-action S3 --files drafts/chapter-001.md --reports reviews/chapter-001.quick.json
-./bin/canonloom record --stage S2 --model my-model --input-tokens 10000 --output-tokens 1500 --latency-ms 4000
+./bin/canonloom --root ~/my-novel repair --dry-run
+./bin/canonloom --root ~/my-novel repair
+./bin/canonloom --root ~/my-novel retry S0 --work-id chapter-001 --reason "修订后重新跑全流程"
+./bin/canonloom --root ~/my-novel diagnose --json
+./bin/canonloom --root ~/my-novel handoff --work-id chapter-001 --source-stage S2 --next-action S3 --files drafts/chapter-001.md --reports reviews/chapter-001.quick.json
+./bin/canonloom --root ~/my-novel record --stage S2 --model my-model --input-tokens 10000 --output-tokens 1500 --latency-ms 4000
 ```
 
 每次实际修复都会记录到 `logs/repairs/repair-*.json`，包含修复前状态、执行动作和修复后状态。

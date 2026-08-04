@@ -1,6 +1,6 @@
-# Production tools
+# Agent / Maintainer tools
 
-CanonLoom now includes the generic execution tools that were previously embedded in the author's project workflows. They are intentionally story-agnostic: they read project contracts, Markdown, JSON reports, and the standard directory layout.
+CanonLoom includes generic execution tools that were previously embedded in project workflows. They are intentionally story-agnostic and are primarily intended for agents and maintainers. Authors normally use the smaller command surface documented in the main README.
 
 ## Tool chain
 
@@ -60,7 +60,7 @@ The former projects contained richer project-specific rules, such as fixed CJK l
 - S2 stores quick findings; it may be `PASS` or `NEEDS_REPAIR` and should route to S3 when needed.
 - S3 uses `repair-plan` and writes a revised draft without inventing canon.
 - S4 requires a valid strict report with `status=PASS`, `COMPLETED`, or `AGREEMENT`.
-- S5 stores an independent review.
+- S5 stores an independent review with provenance (`review_id`, `reviewer_mode`, `run_id`, `source_sha256`); the same model may be used in a separate review pass.
 - S5b uses `cross-validate`; disagreement is blocked and routed to human decision.
 - S6 remains the only settlement and promotion gate.
 - After S6 passes, `settle` performs the mechanical draft-to-manuscript copy only when the explicit approval and settlement trace exist.

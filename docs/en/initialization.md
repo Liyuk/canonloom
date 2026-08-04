@@ -19,7 +19,7 @@ These fields are not final project constraints until `author_confirmed` is `true
 You may provide the first author inputs during initialization:
 
 ```sh
-canonloom init ~/my-novel --name "Harbor Mystery" \
+./bin/canonloom init ~/my-novel --name "Harbor Mystery" \
   --language en-US --genre "speculative mystery" \
   --audience "adult readers" --pov close-third \
   --chapter-min 3000 --chapter-max 7000
@@ -42,9 +42,9 @@ AI recognition is a proposal layer. It must not silently promote facts to `canon
 ## Recommended flow
 
 ```text
-canonloom init
+./bin/canonloom init
   ↓
-canonloom setup
+./bin/canonloom --root ~/my-novel setup
   ↓
 author confirms author-setup
   ↓
@@ -58,7 +58,7 @@ idea → planning → contract → work
 Confirm the author setup with:
 
 ```sh
-canonloom setup --confirm
+./bin/canonloom --root ~/my-novel setup --confirm
 ```
 
 Before confirmation, CanonLoom does not allow `planning`, `work`, `characters`, `world`, `research`, `revision`, or `review`. `idea` and `reference` remain available for exploration.

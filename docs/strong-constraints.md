@@ -54,7 +54,7 @@ validation inputs, not permission for an agent to invent missing facts.
 | S2 | current draft only | deterministic quick findings | `reviews/`, `traces/` | does not rewrite prose |
 | S3 | draft, findings, contract, named evidence | repair draft + repair report | `drafts/`, `reviews/` | no new facts during repair |
 | S4 | repaired draft | strict check result | `reviews/`, `traces/` | BLOCKER/MAJOR findings must be resolved or escalated |
-| S5 | draft, contract, evidence, current state | independent review pass | `reviews/` | independent means an isolated review context; it does not require a second model |
+| S5 | draft, contract, evidence, current state | independent review pass | `reviews/` | independent means a new review artifact with `review_id`, `reviewer_mode`, `run_id`, and `source_sha256`; it does not require a second model, but it cannot reuse the Strict review id/run |
 | S5b | S4 result + S5 report | cross-validation/reconciliation report | `reviews/`, `traces/` | may compare two isolated reports from one model or multiple models; disagreement becomes human decision |
 | S6 | explicitly approved draft, reports, accepted delta | handoff, settlement, indexes | `manuscript/`, `memory/`, `traces/` | no approval means no promotion |
 

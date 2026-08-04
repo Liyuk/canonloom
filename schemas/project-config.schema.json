@@ -19,6 +19,8 @@
     "quality": {"type": "object"},
     "context": {"type": "object"},
     "style_profile": {"type": "object"},
+    "setup": {"type": "object"},
+    "narrative_state": {"type": "object"},
     "language_policy": {"type": "object"},
     "runtime": {"type": "object"},
     "budget": {"type": "object"}

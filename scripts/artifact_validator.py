@@ -20,6 +20,49 @@ def load(path: Path) -> dict:
     return value if isinstance(value, dict) else {"errors": ["root must be an object"]}
 
 
+def check_chapter_contract(data: dict) -> list[str]:
+    errors = []
+    required = {"id", "objective", "viewpoint", "time", "location", "required_changes", "exit_state"}
+    errors += [f"missing field: {key}" for key in sorted(required - data.keys())]
+    for field in ("id", "objective", "viewpoint", "time", "location", "exit_state"):
+        if field in data and (not isinstance(data[field], str) or not data[field].strip()):
+            errors.append(f"{field} must be a non-empty string")
+    for field in ("required_changes", "forbidden_changes", "open_questions", "evidence_refs", "beats", "forbidden_terms", "forbidden_punctuation", "reveal_updates"):
+        if field in data and not isinstance(data[field], list):
+            errors.append(f"{field} must be an array")
+    for field in ("reader_effect",):
+        if field in data and not isinstance(data[field], dict):
+            errors.append(f"{field} must be an object")
+    if "causal_change" in data and not isinstance(data["causal_change"], list):
+        errors.append("causal_change must be an array")
+    if "character_agency" in data and not isinstance(data["character_agency"], list):
+        errors.append("character_agency must be an array")
+    return errors
+
+
+def check_narrative_record(kind: str, data: dict) -> list[str]:
+    if kind == "narrative-event":
+        required = {"event_id", "chapter_id", "subject", "action", "object", "status"}
+        statuses = {"PROPOSED", "CONFIRMED", "REJECTED"}
+        id_key = "event_id"
+    elif kind == "knowledge-state":
+        required = {"knowledge_id", "holder", "proposition", "status"}
+        statuses = {"PROPOSED", "CONFIRMED", "REJECTED"}
+        id_key = "knowledge_id"
+    elif kind == "reveal":
+        required = {"setup_id", "status", "reader_knows", "protagonist_knows"}
+        statuses = {"OPEN", "PARTIAL", "PAID_OFF", "ABANDONED"}
+        id_key = "setup_id"
+    else:
+        return [f"unknown narrative record type: {kind}"]
+    errors = [f"missing field: {key}" for key in sorted(required - data.keys())]
+    if data.get("status") not in statuses:
+        errors.append(f"invalid status: {data.get('status')}")
+    if not isinstance(data.get(id_key), str) or not data.get(id_key):
+        errors.append(f"{id_key} must be a non-empty string")
+    return errors
+
+
 def check_artifact(kind: str, path: Path) -> list[str]:
     data = load(path)
     errors = list(data.pop("errors", []))
@@ -29,6 +72,18 @@ def check_artifact(kind: str, path: Path) -> list[str]:
         if data.get("schema_version") != "0.2": errors.append("schema_version must be 0.2")
         if not isinstance(data.get("included_files"), list): errors.append("included_files must be an array")
         if not isinstance(data.get("provenance"), list): errors.append("provenance must be an array")
+    elif kind == "chapter-contract":
+        errors += check_chapter_contract(data)
+    elif kind == "narrative-event":
+        errors += check_narrative_record(kind, data)
+    elif kind == "knowledge-state":
+        errors += check_narrative_record(kind, data)
+    elif kind == "reveal":
+        errors += check_narrative_record(kind, data)
+    elif kind == "selection":
+        if not isinstance(data, dict): errors.append("selection root must be an object")
+        if data and not any(key in data for key in ("selected_option", "selection_status", "author_confirmed")):
+            errors.append("selection must identify an option or author decision")
     elif kind == "handoff":
         required = {"schema_version", "generated_at", "work_id", "source_stage", "status", "current_files", "next_action", "approval"}
         errors += [f"missing field: {key}" for key in sorted(required - data.keys())]
@@ -78,7 +133,7 @@ def check_artifact(kind: str, path: Path) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("kind", choices=["context", "handoff", "finding-report", "stage-log", "project-config", "style-profile", "author-setup", "ai-recognition"])
+    parser.add_argument("kind", choices=["context", "chapter-contract", "selection", "narrative-event", "knowledge-state", "reveal", "handoff", "finding-report", "stage-log", "project-config", "style-profile", "author-setup", "ai-recognition"])
     parser.add_argument("path", type=Path)
     args = parser.parse_args(argv)
     errors = check_artifact(args.kind, args.path)

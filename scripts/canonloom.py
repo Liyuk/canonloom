@@ -21,12 +21,15 @@ CONFIG = "canonloom.json"
 SCHEMA_VERSION = "0.2"
 REPOSITORY_VERSION = (Path(__file__).resolve().parents[1] / "VERSION").read_text(encoding="utf-8").strip() if (Path(__file__).resolve().parents[1] / "VERSION").exists() else "0.0.0-dev"
 
+AUTHOR_COMMANDS = ("init", "status", "setup", "idea", "reference", "import", "planning", "work", "characters", "world", "research", "revision", "review", "continue", "route", "diagnose", "state", "repair", "upgrade")
+ADVANCED_COMMANDS = ("retry", "validate", "beats", "index", "query", "context", "cross-validate", "style", "stats", "repair-plan", "normalize-findings", "handoff", "artifact-check", "record", "settle", "gate", "benchmark")
+
 DIRS = [
     "intent", "canon/entities", "canon/rules", "canon/timeline", "canon/sources",
     "plan/volumes", "plan/arcs", "plan/chapter-contracts",
     "workspace/options", "workspace/selections", "workspace/context-packages",
     "drafts", "reviews", "manuscript", "memory/active", "memory/draft",
-    "memory/archive", "issues", "index", "logs/workflows", "logs/repairs", "runs", "handoffs", "traces", "tasks",
+    "memory/archive", "memory/narrative-state", "issues", "index", "logs/workflows", "logs/repairs", "runs", "handoffs", "traces", "tasks",
 ]
 
 TASK_TEXT = {
@@ -100,16 +103,19 @@ def default_sections() -> dict:
             "max_retry_per_stage": 2,
             "retry_requires_new_run": True,
             "review_strategy": "single_model_python",
+            "require_review_provenance": True,
+            "require_independent_review_run": True,
         },
         "quality": {
             "chapter_length": {"min_cjk": 10000, "max_cjk": 14000},
             "dialogue_ratio": {"min": 0.08, "max": 0.16},
             "severity_policy": {"BLOCKER": "stop", "MAJOR": "repair_before_next_stage", "MINOR": "review", "ADVISORY": "inform"},
         },
-        "context": {"include_handoff": True, "include_previous_chapter": True, "include_research": True, "require_provenance": True, "exclude_unapproved_memory": True},
+        "context": {"include_handoff": True, "include_previous_chapter": True, "include_research": True, "include_narrative_state": True, "require_provenance": True, "exclude_unapproved_memory": True},
         "style_profile": {"ref": "intent/style-profile.json", "deterministic_checks": True, "human_review_required": True},
         "setup": {"status": "AUTHOR_INPUT_REQUIRED", "author_config_ref": "intent/author-setup.json", "ai_recognition_ref": "intent/ai-recognition.json", "author_fields": ["project_title", "genre", "audience", "pov", "tone", "content_boundaries"], "ai_write_targets": ["intent/ai-recognition.json", "memory/draft/", "workspace/options/"]},
         "language_policy": {"protocol": "en", "agent_instructions": "bilingual", "project_content": "author_setup", "human_review": "project_content"},
+        "narrative_state": {"mode": "optional", "events_ref": "memory/narrative-state/events.jsonl", "knowledge_ref": "memory/narrative-state/knowledge.jsonl", "reveals_ref": "memory/narrative-state/reveals.json", "policy_ref": "memory/narrative-state/state-policy.json"},
         "runtime": {"primary": "codex", "reviewer": "same_model", "strategy": "single_model_python", "record_model_metadata": True},
         "budget": {"record_input_tokens": True, "record_output_tokens": True, "record_latency": True, "record_retries": True},
     }
@@ -283,6 +289,14 @@ def cmd_init(args: argparse.Namespace) -> int:
         if not target.exists():
             template = Path(__file__).resolve().parents[1] / "templates" / name
             write_json(target, json.loads(template.read_text(encoding="utf-8")))
+    state_policy = root / "memory/narrative-state/state-policy.json"
+    if not state_policy.exists():
+        template = Path(__file__).resolve().parents[1] / "templates/narrative-state-policy.json"
+        write_json(state_policy, json.loads(template.read_text(encoding="utf-8")))
+    for name in ("events.jsonl", "knowledge.jsonl", "reveals.json"):
+        target = root / "memory/narrative-state" / name
+        if not target.exists():
+            target.write_text("{\"reveals\": []}\n" if name == "reveals.json" else "", encoding="utf-8")
     author_setup = root / "intent/author-setup.json"
     setup_data = json.loads(author_setup.read_text(encoding="utf-8"))
     if any(getattr(args, key, None) for key in ("genre", "audience", "pov", "tone", "language", "chapter_min", "chapter_max")) or args.name or not setup_data.get("project_title"):
@@ -463,6 +477,11 @@ def cmd_diagnose(args: argparse.Namespace) -> int:
     return 0 if report["status"] == "OK" else 1
 
 
+def cmd_state(args: argparse.Namespace) -> int:
+    from narrative_state import main as state_main
+    return state_main([args.action, "--root", args.root])
+
+
 def cmd_repair(args: argparse.Namespace) -> int:
     root = require_root(args)
     before = collect_diagnosis(root)
@@ -502,6 +521,16 @@ def cmd_repair(args: argparse.Namespace) -> int:
                     template = Path(__file__).resolve().parents[1] / "templates" / name
                     write_json(target, json.loads(template.read_text(encoding="utf-8")))
                     actions.append({"action": "create_setup_artifact", "path": f"intent/{name}"})
+            state_policy = root / "memory/narrative-state/state-policy.json"
+            if not state_policy.exists():
+                template = Path(__file__).resolve().parents[1] / "templates/narrative-state-policy.json"
+                write_json(state_policy, json.loads(template.read_text(encoding="utf-8")))
+                actions.append({"action": "create_narrative_state_policy", "path": "memory/narrative-state/state-policy.json"})
+            for name in ("events.jsonl", "knowledge.jsonl", "reveals.json"):
+                target = root / "memory/narrative-state" / name
+                if not target.exists():
+                    target.write_text("{\"reveals\": []}\n" if name == "reveals.json" else "", encoding="utf-8")
+                    actions.append({"action": "create_narrative_state_artifact", "path": f"memory/narrative-state/{name}"})
             write_json(config_path(root), data)
         else:
             actions.extend({"action": "would_add_config_field", "field": field} for field in defaults if field not in read_config(root))
@@ -519,6 +548,21 @@ def cmd_repair(args: argparse.Namespace) -> int:
         return 0 if after["status"] == "OK" else 1
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if not blocked else 1
+
+
+def cmd_upgrade(args: argparse.Namespace) -> int:
+    """Upgrade an existing project using only safe structure migrations."""
+    return cmd_repair(args)
+
+
+def cmd_advanced(args: argparse.Namespace) -> int:
+    print("AUTHOR COMMANDS")
+    print("  " + " ".join(AUTHOR_COMMANDS))
+    print("\nAGENT / MAINTAINER COMMANDS")
+    print("  " + " ".join(ADVANCED_COMMANDS))
+    print("\n说明：高级命令仍然可直接运行；普通作者通常只需要 Author Commands。")
+    print("详细说明：docs/production-tools.md")
+    return 0
 
 
 def cmd_tool(args: argparse.Namespace) -> int:
@@ -615,6 +659,71 @@ def cmd_gate(args: argparse.Namespace) -> int:
         write_json(config_path(root), data)
         return 1
 
+    from artifact_validator import check_artifact
+
+    def artifact_errors(kind: str, path: Path) -> list[str]:
+        return check_artifact(kind, path)
+
+    if stage == "S0":
+        checks = [
+            ("chapter-contract", root / f"plan/chapter-contracts/{work_id}.json"),
+            ("selection", root / f"workspace/selections/{work_id}.json"),
+            ("context", root / f"workspace/context-packages/{work_id}.json"),
+        ]
+        for kind, path in checks:
+            errors = artifact_errors(kind, path)
+            if errors:
+                print(f"GATE S0: BLOCKED\n{kind} 协议校验失败：")
+                for error in errors:
+                    print(f"- {error}")
+                data["next_action"] = "repair:S0"
+                data["updated_at"] = now()
+                write_json(config_path(root), data)
+                return 1
+        if data.get("narrative_state", {}).get("mode", "optional") == "required":
+            from narrative_state import collect
+            state_result = collect(root)
+            if state_result.get("status") != "OK":
+                print("GATE S0: BLOCKED\nrequired narrative state 校验失败：")
+                for error in state_result.get("errors", []):
+                    print(f"- {error}")
+                return 1
+
+    if stage in {"S2", "S4", "S5"}:
+        report_path = root / f"reviews/{work_id}.{'quick' if stage == 'S2' else 'strict' if stage == 'S4' else 'independent'}.json"
+        errors = artifact_errors("finding-report", report_path)
+        if errors:
+            print(f"GATE {stage}: BLOCKED\n审查报告协议校验失败：")
+            for error in errors:
+                print(f"- {error}")
+            return 1
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        if report.get("status") not in {"PASS", "COMPLETED", "AGREEMENT"}:
+            print(f"GATE {stage}: BLOCKED\n审查报告状态不是通过状态：{report.get('status')}")
+            return 1
+        if stage == "S4" and data.get("narrative_state", {}).get("mode", "optional") == "required":
+            from narrative_state import collect
+            state_result = collect(root)
+            if state_result.get("status") != "OK":
+                print("GATE S4: BLOCKED\nrequired narrative state 校验失败：")
+                for error in state_result.get("errors", []):
+                    print(f"- {error}")
+                return 1
+        if stage == "S5" and data.get("workflow", {}).get("require_review_provenance", True):
+            required = {"review_id", "reviewer_mode", "run_id", "source_sha256"}
+            missing_provenance = sorted(required - report.keys())
+            if missing_provenance:
+                print("GATE S5: BLOCKED\n独立审查缺少 provenance：")
+                for field in missing_provenance:
+                    print(f"- {field}")
+                return 1
+            strict_path = root / f"reviews/{work_id}.strict.json"
+            if strict_path.exists():
+                strict = json.loads(strict_path.read_text(encoding="utf-8"))
+                if report.get("review_id") == strict.get("review_id") or report.get("run_id") == strict.get("run_id"):
+                    print("GATE S5: BLOCKED\n独立审查不能复用 Strict 的 review_id 或 run_id")
+                    return 1
+
     if stage == "S0":
         contract_path = root / f"plan/chapter-contracts/{work_id}.json"
         try:
@@ -668,6 +777,12 @@ def cmd_gate(args: argparse.Namespace) -> int:
             data["updated_at"] = now()
             write_json(config_path(root), data)
             return 1
+        if stage == "S5b":
+            first = str(report.get("first", ""))
+            second = str(report.get("second", ""))
+            if not first or not second or first == second:
+                print("GATE S5b: BLOCKED\n交叉验证必须引用两份不同的审查报告")
+                return 1
 
     if stage == "S6":
         approval_path = root / f"tasks/{work_id}.approval.json"
@@ -709,7 +824,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="canonloom", description="CanonLoom 无 GUI、命令驱动的长篇小说工作流")
     parser.add_argument("--version", action="version", version=f"canonloom {REPOSITORY_VERSION}")
     parser.add_argument("--root", default=".", help="项目根目录，默认当前目录")
-    sub = parser.add_subparsers(dest="command", required=True)
+    sub = parser.add_subparsers(dest="command", required=True, metavar="COMMAND")
     init = sub.add_parser("init", help="初始化或补齐项目目录")
     init.add_argument("path", nargs="?", default=".")
     init.add_argument("--name")
@@ -727,7 +842,7 @@ def build_parser() -> argparse.ArgumentParser:
     status.set_defaults(func=cmd_status)
 
     for name, help_text in (("setup", "完成项目初始化"), ("idea", "开始创意"), ("reference", "开始拆书"), ("import", "导入已有稿件"), ("planning", "开始项目/卷章规划"), ("work", "开始工作"), ("characters", "人物校准"), ("world", "世界推演"), ("research", "资料核验"), ("revision", "开始修订"), ("review", "开始审查"), ("benchmark", "对标拆解")):
-        item = sub.add_parser(name, help=help_text)
+        item = sub.add_parser(name, help=argparse.SUPPRESS if name in ADVANCED_COMMANDS else help_text)
         item.add_argument("--work-id")
         item.add_argument("--input", help="补充任务说明")
         if name == "setup":
@@ -736,7 +851,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     cont = sub.add_parser("continue", help="继续当前工作")
     cont.set_defaults(func=cmd_continue)
-    retry = sub.add_parser("retry", help="保留历史并从指定阶段重新验证")
+    retry = sub.add_parser("retry", help=argparse.SUPPRESS)
     retry.add_argument("stage", choices=sorted(STAGE_REQUIREMENTS))
     retry.add_argument("--work-id")
     retry.add_argument("--reason")
@@ -747,9 +862,18 @@ def build_parser() -> argparse.ArgumentParser:
     diagnose = sub.add_parser("diagnose", help="检查项目结构和任务文件")
     diagnose.add_argument("--json", action="store_true", help="输出机器可读 JSON")
     diagnose.set_defaults(func=cmd_diagnose)
+    state = sub.add_parser("state", help="检查或汇总可选的叙事状态层")
+    state.add_argument("action", choices=["validate", "report"])
+    state.set_defaults(func=cmd_state)
     repair = sub.add_parser("repair", help="修复白名单内的项目结构问题")
     repair.add_argument("--dry-run", action="store_true", help="只显示拟执行的修复")
     repair.set_defaults(func=cmd_repair)
+
+    upgrade = sub.add_parser("upgrade", help="将旧项目补齐到当前协议结构")
+    upgrade.add_argument("--dry-run", action="store_true")
+    upgrade.set_defaults(func=cmd_upgrade)
+    advanced = sub.add_parser("advanced", help="查看 Agent 和维护工具")
+    advanced.set_defaults(func=cmd_advanced)
     for name, help_text in (
         ("validate", "校验章节草稿"), ("beats", "校验章契和 Beat"),
         ("index", "构建章节索引"), ("query", "检索相关章节"),
@@ -757,10 +881,10 @@ def build_parser() -> argparse.ArgumentParser:
         ("style", "计算风格指标"), ("stats", "统计章节与稿件"),
         ("repair-plan", "从审查报告生成修复计划"), ("normalize-findings", "将旧审查输出统一为 Finding"),
     ):
-        item = sub.add_parser(name, help=help_text)
+        item = sub.add_parser(name, help=argparse.SUPPRESS)
         item.add_argument("tool_args", nargs=argparse.REMAINDER)
         item.set_defaults(func=cmd_tool, tool_name=name)
-    handoff = sub.add_parser("handoff", help="生成阶段交接包")
+    handoff = sub.add_parser("handoff", help=argparse.SUPPRESS)
     handoff.add_argument("--work-id", required=True)
     handoff.add_argument("--source-stage", default="S0")
     handoff.add_argument("--status", default="READY")
@@ -771,11 +895,11 @@ def build_parser() -> argparse.ArgumentParser:
     handoff.add_argument("--risk", nargs="*", default=[])
     handoff.add_argument("--output")
     handoff.set_defaults(func=cmd_handoff)
-    artifact = sub.add_parser("artifact-check", help="无第三方依赖校验标准 JSON 产物")
+    artifact = sub.add_parser("artifact-check", help=argparse.SUPPRESS)
     artifact.add_argument("kind", choices=["context", "handoff", "finding-report", "stage-log", "project-config", "style-profile", "author-setup", "ai-recognition"])
     artifact.add_argument("path")
     artifact.set_defaults(func=cmd_artifact_check)
-    record = sub.add_parser("record", help="记录模型/脚本运行指标，不绑定具体模型 API")
+    record = sub.add_parser("record", help=argparse.SUPPRESS)
     record.add_argument("--stage", default="runtime")
     record.add_argument("--model", default="unknown")
     record.add_argument("--provider", default="unknown")
@@ -785,15 +909,19 @@ def build_parser() -> argparse.ArgumentParser:
     record.add_argument("--retries", type=int, default=0)
     record.add_argument("--note")
     record.set_defaults(func=cmd_record)
-    settle = sub.add_parser("settle", help="在作者批准后执行 S6 机械交付")
+    settle = sub.add_parser("settle", help=argparse.SUPPRESS)
     settle.add_argument("--work-id", required=True)
     settle.add_argument("--source")
     settle.add_argument("--target")
     settle.set_defaults(func=lambda args: __import__("subprocess").run([sys.executable, str(Path(__file__).with_name("settle_chapter.py")), "--root", args.root, "--work-id", args.work_id] + (["--source", args.source] if args.source else []) + (["--target", args.target] if args.target else []), check=False).returncode)
-    gate = sub.add_parser("gate", help="运行一个 S0–S6 阶段门禁")
+    gate = sub.add_parser("gate", help=argparse.SUPPRESS)
     gate.add_argument("stage", choices=sorted(STAGE_REQUIREMENTS))
     gate.add_argument("--work-id")
     gate.set_defaults(func=cmd_gate)
+    # argparse renders SUPPRESS literally for subparser choices; remove the
+    # advanced pseudo-actions from the public help while keeping the commands
+    # fully callable for agents and maintainers.
+    sub._choices_actions = [action for action in sub._choices_actions if action.dest not in ADVANCED_COMMANDS]
     return parser
 
 

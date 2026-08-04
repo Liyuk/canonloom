@@ -33,6 +33,17 @@ project/
 
 The model is intentionally compatible with Markdown-first projects. Structured sidecar files can be added where validation, indexing, or automation requires them.
 
+## 生效优先级
+
+质量约束按以下顺序生效，越靠前越具体：
+
+1. chapter contract
+2. `intent/author-setup.json`
+3. `intent/style-profile.json`
+4. `canonloom.json` project defaults
+
+因此，项目默认值不会覆盖作者配置，作者配置也不会覆盖单章契约。章节审查应报告最终采用的值。
+
 ## State lifecycle
 
 ```text

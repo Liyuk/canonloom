@@ -4,6 +4,7 @@
 import argparse
 import json
 import shutil
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -55,7 +56,25 @@ def main() -> int:
         raise SystemExit(f"target already exists with different content: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, target)
-    report = {"tool": "settle_chapter", "work_id": args.work_id, "settled_at": now(), "source": str(source.relative_to(root)), "target": str(target.relative_to(root)), "approval": str(approval_path.relative_to(root)), "canon_promotion": "NONE"}
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    try:
+        from canonloom_tools import build_index
+        build_index(root, root / "index/chapter-index.json")
+        index_status = "UPDATED"
+    except Exception as exc:
+        index_status = f"FAILED: {exc}"
+    state_report = None
+    state_mode = config.get("narrative_state", {}).get("mode", "optional")
+    if state_mode != "disabled":
+        try:
+            from narrative_state import collect
+            state_report = collect(root)
+            if state_mode == "required" and state_report.get("status") != "OK":
+                raise SystemExit("required narrative state is invalid; settlement aborted")
+        except ImportError:
+            if state_mode == "required":
+                raise SystemExit("required narrative state tool is unavailable")
+    report = {"tool": "settle_chapter", "work_id": args.work_id, "settled_at": now(), "source": str(source.relative_to(root)), "target": str(target.relative_to(root)), "approval": str(approval_path.relative_to(root)), "canon_promotion": "NONE", "index_status": index_status, "narrative_state_status": state_report.get("status") if state_report else "DISABLED", "state_promotion": "AUTHOR_APPROVAL_REQUIRED" if state_report else "NONE"}
     log = root / "logs/repairs" / f"settlement-{args.work_id}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}.json"
     log.parent.mkdir(parents=True, exist_ok=True)
     log.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

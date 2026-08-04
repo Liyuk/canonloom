@@ -5,18 +5,17 @@ CanonLoom is a local file workflow. The author gives a short instruction, an age
 ## Minimal daily loop
 
 ```sh
-./bin/canonloom status
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel status
+./bin/canonloom --root ~/my-novel continue
 ```
 
 For a new project:
 
 ```sh
 ./bin/canonloom init ~/my-novel --name "My Novel"
-cd ~/my-novel
-./bin/canonloom setup
-./bin/canonloom setup --confirm
-./bin/canonloom idea
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel setup --confirm
+./bin/canonloom --root ~/my-novel idea
 ```
 
 ## From idea to chapter
@@ -42,10 +41,10 @@ The author controls project boundaries, selected creative options, canon promoti
 ## If something goes wrong
 
 ```sh
-./bin/canonloom diagnose
-./bin/canonloom repair --dry-run
-./bin/canonloom repair
-./bin/canonloom diagnose
+./bin/canonloom --root ~/my-novel diagnose
+./bin/canonloom --root ~/my-novel repair --dry-run
+./bin/canonloom --root ~/my-novel repair
+./bin/canonloom --root ~/my-novel diagnose
 ```
 
 `repair` only handles safe structural problems. For story contradictions or literary problems, ask the agent to create a review finding or repair plan. Do not use repair as a shortcut to rewrite canon.

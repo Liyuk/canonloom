@@ -22,8 +22,11 @@ python3 scripts/canonloom.py work
 python3 scripts/canonloom.py continue
 python3 scripts/canonloom.py status
 python3 scripts/canonloom.py diagnose
+python3 scripts/canonloom.py state report
+python3 scripts/canonloom.py state validate
 python3 scripts/canonloom.py repair --dry-run
 python3 scripts/canonloom.py repair
+python3 scripts/canonloom.py upgrade --dry-run
 python3 scripts/canonloom.py gate S0 --work-id chapter-001
 python3 scripts/canonloom.py gate S1 --work-id chapter-001
 python3 scripts/canonloom.py validate drafts/chapter-001.md --contract plan/chapter-contracts/chapter-001.json --level quick

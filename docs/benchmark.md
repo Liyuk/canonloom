@@ -55,8 +55,8 @@ CanonLoom 将耗时拆成两部分：
 运行 manifest 记录模型侧事件：
 
 ```sh
-canonloom retry S0 --work-id chapter-001 --reason "benchmark"
-canonloom record --stage S2 --model example-model \
+./bin/canonloom --root . retry S0 --work-id chapter-001 --reason "benchmark"
+./bin/canonloom --root . record --stage S2 --model example-model \
   --input-tokens 12000 --output-tokens 1800 \
   --latency-ms 4200 --retries 0
 ```
@@ -83,7 +83,7 @@ python3 scripts/benchmark_compare.py \
 
 ### 一次本地实测样例
 
-在当前的《盼东归》验证项目上，使用一章已有草稿、Python 3.9、本地文件系统运行上述命令，6 个确定性步骤总耗时为 **183.45 ms**：
+在一个示例验证项目上，使用一章已有草稿、Python 3.9、本地文件系统运行上述命令，6 个确定性步骤总耗时为 **183.45 ms**：
 
 | 步骤 | 耗时 |
 |---|---:|

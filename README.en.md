@@ -4,7 +4,7 @@
 
 [中文 README](README.md)
 
-Version: `0.1.0` · [Changelog](CHANGELOG.md)
+Version: `0.2.0` · [Changelog](CHANGELOG.md)
 
 CanonLoom is not a GUI writing application and not a black box that claims to generate an entire novel from one prompt. It turns novel production into inspectable, resumable tasks: ideation, reference analysis, planning, chapter contracts, beats, bounded context, drafting, revision, review, and settlement.
 
@@ -39,7 +39,7 @@ draft → quick validation → repair plan
       ↓
 strict validation → independent review → optional cross-validation
       ↓
-author approval → settlement → manuscript / active memory
+author approval → settlement → manuscript + state settlement trace
 ```
 
 The production protocol is S0–S6:
@@ -54,7 +54,7 @@ S4 Strict Check → S5 Independent Review → S5b Cross-Validation
 S6 Human-Approved Settlement
 ```
 
-Stages cannot be skipped. Without an explicit S6 approval, a draft is not promoted to `manuscript/` or `memory/`.
+Stages cannot be skipped. Without an explicit S6 approval, a draft is not promoted to `manuscript/`; narrative state is not silently promoted to canon.
 
 ## Recommended runtime: one model plus Python
 
@@ -84,12 +84,10 @@ cd canonloom
 ./bin/canonloom init ~/my-novel --name "My Novel" \
   --language en-US --genre "speculative mystery" \
   --audience "adult readers" --pov close-third
-cd ~/my-novel
-
-./bin/canonloom setup
-./bin/canonloom setup --confirm
-./bin/canonloom idea
-./bin/canonloom continue
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel setup --confirm
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
 ```
 
 Initialization intentionally separates author-confirmed configuration from AI recognition:
@@ -106,11 +104,15 @@ AI recognition is a proposal layer. It does not silently promote facts into `can
 ## Everyday commands
 
 ```sh
-canonloom status       # Where am I?
-canonloom continue     # Follow next_action
-canonloom diagnose     # What is structurally wrong?
-canonloom repair       # Repair safe structural issues
-canonloom --version    # Show framework version
+./bin/canonloom --root ~/my-novel status       # Where am I?
+./bin/canonloom --root ~/my-novel continue     # Follow next_action
+./bin/canonloom --root ~/my-novel diagnose     # What is structurally wrong?
+./bin/canonloom --root ~/my-novel repair       # Repair safe structural issues
+./bin/canonloom --root ~/my-novel upgrade      # Upgrade an older project to the current structure
+./bin/canonloom --version                      # Show framework version
+./bin/canonloom --root ~/my-novel state report # Summarize optional narrative state
+./bin/canonloom --root ~/my-novel state validate # Validate events, knowledge, and reveals
+./bin/canonloom advanced                       # Show Agent/maintainer tools
 ```
 
 Run the minimal end-to-end smoke test with:
@@ -120,6 +122,8 @@ examples/minimal-project/smoke.sh
 ```
 
 Creation and analysis entry points include `setup`, `idea`, `reference`, `import`, `planning`, `work`, `characters`, `world`, `research`, `revision`, and `review`.
+
+Authors do not need to learn `gate`, `context`, `handoff`, or `artifact-check`. These commands remain available for agents and maintainers; run `canonloom advanced` to see the complete list.
 
 ## Recovery and observability
 
@@ -132,13 +136,13 @@ runs/<work-id>/<run-id>/manifest.json
 It can record stage, runtime strategy, tool calls, input/output tokens, latency, retries, and events. Context packages and indexes record SHA-256 source fingerprints.
 
 ```sh
-canonloom retry S0 --work-id chapter-001 --reason "revision needs a fresh pass"
-canonloom record --stage S2 --model my-model \
+./bin/canonloom --root ~/my-novel retry S0 --work-id chapter-001 --reason "revision needs a fresh pass"
+./bin/canonloom --root ~/my-novel record --stage S2 --model my-model \
   --input-tokens 10000 --output-tokens 1500 \
   --latency-ms 4000 --retries 0
 ```
 
-`diagnose → repair → diagnose` only repairs safe structure, configuration, and task artifacts. It does not rewrite canon, manuscript prose, review judgments, or author approvals.
+`diagnose → repair → diagnose` only repairs safe structure, configuration, and task artifacts. It does not rewrite canon, manuscript prose, review judgments, or author approvals. `upgrade` is the explicit entry point for older projects and currently performs the same safe migrations.
 
 ## Runtime compatibility
 
@@ -176,6 +180,9 @@ git diff --check
 - [Runtime adapters](docs/runtime-adapters.md)
 - [Style Profile](docs/style-profile.md)
 - [Benchmark and comparison notes](docs/en/benchmark.md)
+- [Narrative state](docs/en/narrative-state.md)
+- [Community and paper review](docs/research-review.md)
+- [Iteration roadmap](docs/iteration-roadmap.md)
 
 ## Scope
 

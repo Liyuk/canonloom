@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 — 2026-08-04
+
+- Added optional narrative state artifacts for events, knowledge, and reveals.
+- Added protocol validation for chapter contracts, selections, context packages, and review reports.
+- Added S5 review provenance checks and stronger S5b cross-validation boundaries.
+- Added configuration precedence and safe `canonloom upgrade` migrations.
+- Added narrative-state context provenance and post-settlement index updates.
+- Reduced the public CLI surface while retaining advanced Agent/maintainer commands.
+- Added P0/P1 regression coverage and an iteration roadmap.
+
 ## 0.1.0 — 2026-08-04
 
 - Initial public workflow release.

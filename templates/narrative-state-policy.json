@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "mode": "optional",
+  "promotion_policy": "AI may propose; author confirms before CONFIRMED or CANON.",
+  "event_schema_ref": "schemas/narrative-event.schema.json",
+  "knowledge_schema_ref": "schemas/knowledge-state.schema.json",
+  "reveal_schema_ref": "schemas/reveal.schema.json",
+  "require_source_ref": true,
+  "check_duplicate_ids": true,
+  "check_reveal_status": true
+}
