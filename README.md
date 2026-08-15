@@ -2,7 +2,7 @@
 
 > 一个命令驱动、作者掌舵、可审计的长篇小说生产框架。
 
-[English README](README.en.md)
+[English README](README.en.md) · [文档与落地页](https://liyuk.github.io/canonloom/)
 
 版本：`0.2.1` · [变更记录](CHANGELOG.md)
 
@@ -198,6 +198,19 @@ benchmark 文档区分三类数字：
 3. 未来在同一模型、同一任务集下进行的跨架构实测。
 
 目前不能把第 2 类数字写成第 3 类结果。
+
+## 文档与网站
+
+- **落地页 + 文档站**：https://liyuk.github.io/canonloom/（GitHub Pages 自动部署）
+- **站点源码**：`site/`（零第三方依赖，Python 标准库静态站点生成器）
+- **本地构建/预览**：
+
+```sh
+python3 site/build.py            # 构建到 site/dist/
+python3 site/build.py --serve    # 构建并本地预览 http://127.0.0.1:8000
+```
+
+站点由 `.github/workflows/deploy.yml` 在 `main` 分支推送时自动构建并部署到 Pages。
 
 ## 文档入口
 

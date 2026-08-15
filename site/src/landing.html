@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanonLoom — 命令驱动、作者掌舵、可审计的长篇小说生产框架</title>
+<meta name="description" content="CanonLoom 是一个命令驱动、作者掌舵、可审计的长篇小说生产框架。它把小说生产拆成 S0–S6 强约束阶段：章契、草稿、检查、修订、审查、结算。协议在文件里，不在模型的记忆里。">
+<meta property="og:title" content="CanonLoom — 长篇小说生产框架">
+<meta property="og:description" content="命令驱动、作者掌舵、可审计的长篇小说生产框架。S0–S6 阶段门禁，协议在文件里，不在模型的记忆里。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://github.com/Liyuk/canonloom">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">⏳</span>
+      <span class="brand-name">CanonLoom</span>
+      <span class="brand-ver">v0.2.1</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="/docs/">文档</a>
+      <a href="/docs/blog/">博客</a>
+      <a href="https://github.com/Liyuk/canonloom">GitHub</a>
+    </nav>
+    <button class="nav-toggle" aria-label="切换导航" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">命令驱动 · 作者掌舵 · 可审计</p>
+    <h1 class="hero-title">长篇小说生产框架，<br><span class="accent">把写作变成可恢复的状态机</span></h1>
+    <p class="hero-lead">
+      CanonLoom 不是"一句话生成整本小说"的黑箱。它把一章的生产拆成
+      <strong>S0–S6 七个强约束阶段</strong>，作者在每一步做选择与批准，Python 做确定性校验，
+      Agent 负责创作。协议在文件里，不在模型的记忆里。
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/docs/en/user-guide.html">五分钟上手</a>
+      <a class="btn btn-ghost" href="https://github.com/Liyuk/canonloom">GitHub 仓库</a>
+    </div>
+    <div class="hero-stats" aria-label="当前状态">
+      <div class="stat"><span class="stat-num">0.2.1</span><span class="stat-label">当前版本</span></div>
+      <div class="stat"><span class="stat-num">7</span><span class="stat-label">S0–S6 阶段门禁</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">第三方依赖</span></div>
+      <div class="stat"><span class="stat-num">18</span><span class="stat-label">单元测试通过</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S0–S6 pipeline visualization ============ -->
+<section class="pipeline-section">
+  <div class="container">
+    <h2 class="section-title">一章的生产：从想法到结算，阶段不能跳过</h2>
+    <p class="section-lead">每一章都要走过 S0–S6。任何一层不依赖某个模型的隐藏记忆——出问题可以定位到具体阶段。</p>
+    <div class="pipeline" aria-label="S0–S6 生产管线">
+      <ol class="pipe">
+        <li class="pipe-item" data-stage="S0">
+          <span class="pipe-stage">S0</span>
+          <span class="pipe-name">章契</span>
+          <span class="pipe-desc">冻结章契、方案选择、上下文包</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S1">
+          <span class="pipe-stage">S1</span>
+          <span class="pipe-name">草稿</span>
+          <span class="pipe-desc">按通过契约生成候选正文</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S2">
+          <span class="pipe-stage">S2</span>
+          <span class="pipe-name">快速检查</span>
+          <span class="pipe-desc">确定性快速校验</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S3">
+          <span class="pipe-stage">S3</span>
+          <span class="pipe-name">修订</span>
+          <span class="pipe-desc">按 Finding 受限修订</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S4">
+          <span class="pipe-stage">S4</span>
+          <span class="pipe-name">严格检查</span>
+          <span class="pipe-desc">结构 / 连续性检查</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S5">
+          <span class="pipe-stage">S5</span>
+          <span class="pipe-name">独立审查</span>
+          <span class="pipe-desc">独立审查视角</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S5b">
+          <span class="pipe-stage">S5b</span>
+          <span class="pipe-name">交叉验证</span>
+          <span class="pipe-desc">隔离报告交叉验证</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S6">
+          <span class="pipe-stage">S6</span>
+          <span class="pipe-name">结算</span>
+          <span class="pipe-desc">作者批准 → 进 manuscript</span>
+        </li>
+      </ol>
+    </div>
+    <p class="pipeline-note">
+      S6 没有作者批准文件，草稿就不会晋升到 <code>manuscript/</code>。阶段不能跳过，状态晋升必须经过作者。
+    </p>
+  </div>
+</section>
+
+<!-- ============ What it does / principles ============ -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title">它解决什么问题</h2>
+    <p class="section-lead">长篇小说最容易坏在章节之间：人物动机漂移、时间线断裂、未经批准的设定悄悄变成"故事事实"。</p>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">🧭</div>
+        <h3>状态漂移</h3>
+        <p>角色目标、知识范围、世界规则在不同章节之间悄悄变化。状态显式化为文件后，漂移可以被检测。</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">📄</div>
+        <h3>未批准晋升</h3>
+        <p>模型随口发明的设定，写进正文就当成了"故事事实"。S0–S6 门禁保证候选不是决定。</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">🔎</div>
+        <h3>审查不可追溯</h3>
+        <p>"这段依据了哪份材料？这条审查意见修了吗？"——上下文包记录每份来源的 SHA-256 指纹。</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">✋</div>
+        <h3>建议与决定混淆</h3>
+        <p>AI 选项、Agent 临时选择、作者正式批准三层分开保存。AI 推断不会自动进入 canon。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Architecture diagram ============ -->
+<section class="arch-section">
+  <div class="container">
+    <h2 class="section-title">作者意图 → 章契 → 草稿 → 评审</h2>
+    <p class="section-lead">创意走创造性环路（发散 → 比较 → 选择 → 创作），约束走治理环路（取回 → 校验 → 审查 → 结算）。</p>
+    <figure class="arch-figure">
+      <svg class="arch-svg" viewBox="0 0 1000 560" role="img" aria-labelledby="arch-title arch-desc">
+        <title id="arch-title">CanonLoom 生产流水线</title>
+        <desc id="arch-desc">作者意图经过规划、选择与上下文编译，生成草稿；草稿经过检查、修订、独立审查与交叉验证；作者批准后进入结算。</desc>
+        <defs>
+          <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="#7b8aa3"/>
+          </marker>
+        </defs>
+        <!-- Row 1: author intent -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="40" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="72" text-anchor="middle">作者意图</text>
+          <text class="arch-sub" x="160" y="94" text-anchor="middle">intent / boundaries</text>
+        </g>
+        <!-- Row 2: planning -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="182" text-anchor="middle">层级规划</text>
+          <text class="arch-sub" x="160" y="204" text-anchor="middle">volume → arc → contract</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="300" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="400" y="182" text-anchor="middle">作者选择</text>
+          <text class="arch-sub" x="400" y="204" text-anchor="middle">option + rationale</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="540" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="640" y="182" text-anchor="middle">上下文编译</text>
+          <text class="arch-sub" x="640" y="204" text-anchor="middle">bounded package + SHA-256</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box state" x="780" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="880" y="182" text-anchor="middle">正式事实</text>
+          <text class="arch-sub" x="880" y="204" text-anchor="middle">canon / approved</text>
+        </g>
+        <!-- vertical arrows row1->row2 -->
+        <path d="M160 110 L160 150" class="arch-arrow"/>
+        <path d="M400 110 L400 150" class="arch-arrow" opacity="0"/>
+        <path d="M640 110 L640 150" class="arch-arrow" opacity="0"/>
+        <!-- row3: draft -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="292" text-anchor="middle">候选草稿</text>
+          <text class="arch-sub" x="160" y="314" text-anchor="middle">drafts/ · beats → scenes</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="300" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="400" y="292" text-anchor="middle">快速检查</text>
+          <text class="arch-sub" x="400" y="314" text-anchor="middle">S2 确定性校验</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="540" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="640" y="292" text-anchor="middle">独立审查</text>
+          <text class="arch-sub" x="640" y="314" text-anchor="middle">S5 evidence findings</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box settle" x="780" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="880" y="292" text-anchor="middle">结算</text>
+          <text class="arch-sub" x="880" y="314" text-anchor="middle">S6 → manuscript/</text>
+        </g>
+        <!-- horizontal arrows row3 -->
+        <path d="M260 295 L300 295" class="arch-arrow"/>
+        <path d="M500 295 L540 295" class="arch-arrow"/>
+        <path d="M740 295 L780 295" class="arch-arrow"/>
+        <!-- feedback loop -->
+        <path d="M640 330 L640 390 L400 390 L400 330" class="arch-loop" marker-end="url(#arr)"/>
+        <text class="arch-loop-label" x="520" y="378" text-anchor="middle">修订环 · repair</text>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CLI demo ============ -->
+<section class="cli-section">
+  <div class="container">
+    <h2 class="section-title">作者日常只需要一套短命令</h2>
+    <div class="cli-grid">
+      <div class="cli-window" aria-label="命令行演示">
+        <div class="cli-bar"><span class="cli-dot"></span><span class="cli-dot"></span><span class="cli-dot"></span><span class="cli-title">~/my-novel</span></div>
+        <pre class="cli-body" aria-hidden="true">
+<span class="cli-prompt">$</span> ./bin/canonloom init ~/my-novel --name "My Novel"
+<span class="cli-out">✓ project initialized (0.2.1)</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel setup --confirm
+<span class="cli-out">✓ AUTHOR_SETUP_CONFIRMED</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel idea
+<span class="cli-out">→ generated 3 candidate directions
+   [1] a locked room and an unreliable witness
+   [2] ...</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel status
+<span class="cli-out">STAGE: ideation · next_action: Start ideation
+LANGUAGE: en · WORKFLOW: standard</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel continue
+<span class="cli-out">✓ current.md updated — agent reads tasks/current.md</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel diagnose
+<span class="cli-out">✓ structure OK</span>
+</pre>
+      </div>
+      <div class="cli-side">
+        <p>命令只负责准备可读的任务文件。Agent 读取 <code>tasks/current.md</code>，执行任务并把产物写入约定目录。</p>
+        <ul class="cli-list">
+          <li><code>status</code> — 现在处于什么阶段？</li>
+          <li><code>continue</code> — 按 next_action 继续（最常用）</li>
+          <li><code>diagnose</code> — 出问题时先跑这个</li>
+          <li><code>repair</code> — 修复白名单内的结构问题</li>
+          <li><code>state report</code> — 汇总可选叙事状态</li>
+        </ul>
+        <a class="btn btn-ghost btn-sm" href="/docs/terminal-and-apps.html">完整命令列表 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Interactive demo ============ -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <h2 class="section-title">试试看：一章如何走完 S0–S6</h2>
+    <p class="section-lead">点击推进一章的生产。每一步都对应真实的门禁与产物。</p>
+    <div class="demo">
+      <div class="demo-tracks" id="demo-tracks" aria-live="polite">
+        <!-- injected by site.js -->
+      </div>
+      <div class="demo-log" id="demo-log" aria-live="polite">
+        <div class="demo-log-head">运行记录</div>
+        <div class="demo-log-body"><p class="demo-log-empty">点击「下一步」开始模拟一章生产。</p></div>
+      </div>
+      <div class="demo-controls">
+        <button class="btn btn-primary btn-sm" id="demo-next" type="button">下一步 →</button>
+        <button class="btn btn-ghost btn-sm" id="demo-reset" type="button">重置</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Principles / design choices ============ -->
+<section class="principles-section">
+  <div class="container">
+    <h2 class="section-title">设计上的"不"</h2>
+    <div class="principles-grid">
+      <div class="principle">
+        <h3>不是 GUI 编辑器</h3>
+        <p>不把作者变成界面里的操作员。</p>
+      </div>
+      <div class="principle">
+        <h3>不默认多模型</h3>
+        <p>单一主模型 + Python 确定性工具，避免状态分叉。</p>
+      </div>
+      <div class="principle">
+        <h3>不引入图数据库</h3>
+        <p>早期项目的主要问题不是查询性能，而是状态边界。</p>
+      </div>
+      <div class="principle">
+        <h3>不把数字当质量</h3>
+        <p>"token 更少"或"分数更高"不等于文学质量。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-section">
+  <div class="container">
+    <h2>五分钟，跑通最小链路</h2>
+    <p>不依赖任何第三方包，只要 Python 3.9+。</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary" href="/docs/en/user-guide.html">阅读快速上手</a>
+      <a class="btn btn-ghost" href="/docs/blog/2026-08-15-announcement-0.2.1.html">阅读 0.2.1 发布公告</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <strong>CanonLoom</strong> v0.2.1 — 命令驱动、作者掌舵、可审计的长篇小说生产框架
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/Liyuk/canonloom">GitHub</a>
+      <a href="/docs/">文档</a>
+      <a href="/docs/blog/">博客</a>
+      <a href="https://github.com/Liyuk/canonloom/blob/main/LICENSE">MIT License</a>
+    </div>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

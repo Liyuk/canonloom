@@ -9,3 +9,6 @@ build/
 __pycache__/
 *.py[cod]
 *.log
+
+# static site build output
+site/dist/

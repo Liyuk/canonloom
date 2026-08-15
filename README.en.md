@@ -2,7 +2,7 @@
 
 > A command-driven, author-controlled, auditable workflow for long-form fiction.
 
-[中文 README](README.md)
+[中文 README](README.md) · [Site & Docs](https://liyuk.github.io/canonloom/)
 
 Version: `0.2.1` · [Changelog](CHANGELOG.md)
 

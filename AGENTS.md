@@ -2,6 +2,8 @@
 
 CanonLoom is a command-driven, file-based workflow. It is not a GUI application.
 
+The project also publishes a landing page and a rendered documentation site to GitHub Pages. Site source lives in `site/` (zero-dependency Python stdlib generator); build with `python3 site/build.py`, deploy via `.github/workflows/deploy.yml`.
+
 ## Start every task
 
 1. Read `canonloom.json`.

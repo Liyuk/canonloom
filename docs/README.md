@@ -2,6 +2,8 @@
 
 CanonLoom keeps machine protocols language-neutral and offers bilingual entry points for the main human-facing guides.
 
+> 在线文档站（落地页 + 全部文档渲染版）：https://liyuk.github.io/canonloom/
+
 ## Core user documentation
 
 | Topic | 中文 | English |
@@ -30,6 +32,8 @@ The following documents are currently maintained in one primary language because
 - [Community and paper review](research-review.md) — 中文
 - [CanonLoom 0.2.0 论文目录](paper-0.2.0/outline.md) — 中文
 - [CanonLoom 0.2.0 完整论文初稿](paper-0.2.0/paper.md) — 中文
+- [Blog: CanonLoom 实操指南](blog/2026-08-15-practical-guide-0.2.1.md) — 中文
 - [Iteration roadmap](iteration-roadmap.md) — 中文
+- [网站源码与构建](https://github.com/Liyuk/canonloom/blob/main/site/README.md) — 中文（落地页 + 文档站，零依赖生成器）
 
 When a document becomes part of the normal user path, add its counterpart under `docs/en/` rather than translating internal research notes by default.

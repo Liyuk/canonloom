@@ -21,6 +21,8 @@ Use the generic production tools in `docs/production-tools.md` for Beat checks, 
 
 The optional narrative state layer is documented in `docs/narrative-state.md`; use it for state reports and validation without promoting AI proposals to canon.
 
+The landing page and rendered documentation site live in `site/` (zero-dependency Python stdlib generator). Rebuild after changing `docs/` or `site/src/`: `python3 site/build.py`; deploy to GitHub Pages via `.github/workflows/deploy.yml`.
+
 Keep machine-facing protocol identifiers in English. Follow `intent/author-setup.json` for prose and review language, and consult `docs/language-policy.md` for bilingual projects.
 
 If the project is structurally inconsistent, diagnose first and use `repair` only for the documented safe repairs. Never use repair to alter canon, manuscript prose, review judgments, or author decisions.
