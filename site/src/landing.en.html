@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanonLoom — A command-driven, author-controlled, auditable long-form fiction framework</title>
+<meta name="description" content="CanonLoom is a command-driven, author-controlled, auditable production framework for long-form fiction. It turns novel production into S0–S6 strongly-constrained stages: contract, draft, check, repair, review, settlement. The protocol lives in files, not in the model's memory.">
+<meta property="og:title" content="CanonLoom — Long-form fiction production framework">
+<meta property="og:description" content="Command-driven, author-controlled, auditable long-form fiction production. S0–S6 stage gates; the protocol lives in files, not in the model's memory.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://github.com/Liyuk/canonloom">
+<link rel="icon" href="{base}/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{base}/assets/site.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{base}/">
+      <span class="brand-mark" aria-hidden="true">⏳</span>
+      <span class="brand-name">CanonLoom</span>
+      <span class="brand-ver">v0.2.1</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="{base}/docs/">Docs</a>
+      <a href="{base}/docs/blog/">Blog</a>
+      <a href="https://github.com/Liyuk/canonloom">GitHub</a>
+      <a class="lang-switch" href="{base}/" lang="zh-CN">中文</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">Command-driven · Author-controlled · Auditable</p>
+    <h1 class="hero-title">A long-form fiction framework,<br><span class="accent">writing as a resumable state machine</span></h1>
+    <p class="hero-lead">
+      CanonLoom is not a black box that claims to generate an entire novel from one prompt.
+      It breaks a chapter's production into <strong>seven strongly-constrained S0–S6 stages</strong>.
+      The author makes choices and approvals at every step; Python does deterministic validation;
+      the agent handles the creative work. <em>The protocol lives in files, not in the model's memory.</em>
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{base}/docs/en/user-guide.html">Get started in 5 minutes</a>
+      <a class="btn btn-ghost" href="https://github.com/Liyuk/canonloom">GitHub repository</a>
+    </div>
+    <div class="hero-stats" aria-label="Current status">
+      <div class="stat"><span class="stat-num">0.2.1</span><span class="stat-label">Current version</span></div>
+      <div class="stat"><span class="stat-num">7</span><span class="stat-label">S0–S6 stage gates</span></div>
+      <div class="stat"><span class="stat-num">0</span><span class="stat-label">Third-party dependencies</span></div>
+      <div class="stat"><span class="stat-num">18</span><span class="stat-label">Unit tests passing</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S0–S6 pipeline visualization ============ -->
+<section class="pipeline-section">
+  <div class="container">
+    <h2 class="section-title">A chapter, from idea to settlement — stages cannot be skipped</h2>
+    <p class="section-lead">Every chapter walks through S0–S6. No layer depends on a model's hidden memory, and failures can be traced to a specific stage.</p>
+    <div class="pipeline" aria-label="S0–S6 production pipeline">
+      <ol class="pipe">
+        <li class="pipe-item" data-stage="S0">
+          <span class="pipe-stage">S0</span>
+          <span class="pipe-name">Contract</span>
+          <span class="pipe-desc">Freeze contract, option, context package</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S1">
+          <span class="pipe-stage">S1</span>
+          <span class="pipe-name">Draft</span>
+          <span class="pipe-desc">Candidate prose against the passed contract</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S2">
+          <span class="pipe-stage">S2</span>
+          <span class="pipe-name">Quick check</span>
+          <span class="pipe-desc">Deterministic fast validation</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S3">
+          <span class="pipe-stage">S3</span>
+          <span class="pipe-name">Repair</span>
+          <span class="pipe-desc">Constrained revision from findings</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S4">
+          <span class="pipe-stage">S4</span>
+          <span class="pipe-name">Strict check</span>
+          <span class="pipe-desc">Structure / continuity validation</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S5">
+          <span class="pipe-stage">S5</span>
+          <span class="pipe-name">Review</span>
+          <span class="pipe-desc">Independent review perspective</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S5b">
+          <span class="pipe-stage">S5b</span>
+          <span class="pipe-name">Cross-validation</span>
+          <span class="pipe-desc">Reconcile isolated reports</span>
+        </li>
+        <li class="pipe-arrow" aria-hidden="true">→</li>
+        <li class="pipe-item" data-stage="S6">
+          <span class="pipe-stage">S6</span>
+          <span class="pipe-name">Settlement</span>
+          <span class="pipe-desc">Author approval → manuscript/</span>
+        </li>
+      </ol>
+    </div>
+    <p class="pipeline-note">
+      Without an S6 approval file, a draft never promotes to <code>manuscript/</code>. Stages cannot be skipped; state promotion requires the author.
+    </p>
+  </div>
+</section>
+
+<!-- ============ What it does / principles ============ -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title">The problem it solves</h2>
+    <p class="section-lead">Long fiction usually breaks between chapters: motivations drift, timelines contradict, unapproved assumptions quietly become "story facts".</p>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">🧭</div>
+        <h3>State drift</h3>
+        <p>Character goals, knowledge, and world rules shift silently between chapters. Made explicit as files, the drift can be detected.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">📄</div>
+        <h3>Unapproved promotion</h3>
+        <p>A setting the model invents becomes a "fact" once it is written into prose. S0–S6 gates keep candidates from being decisions.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">🔎</div>
+        <h3>Untraceable review</h3>
+        <p>"What is this paragraph based on? Was that review comment fixed?" — each context package records source SHA-256 fingerprints.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" aria-hidden="true">✋</div>
+        <h3>Suggestions vs decisions</h3>
+        <p>AI options, agent picks, and author approvals are stored separately. AI inference never auto-enters canon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Architecture diagram ============ -->
+<section class="arch-section">
+  <div class="container">
+    <h2 class="section-title">Author intent → chapter contract → draft → review</h2>
+    <p class="section-lead">The creative loop grows possibility (diverge → compare → select → compose); the governance loop controls commitment (retrieve → verify → review → settle).</p>
+    <figure class="arch-figure">
+      <svg class="arch-svg" viewBox="0 0 1000 560" role="img" aria-labelledby="arch-title arch-desc">
+        <title id="arch-title">CanonLoom production pipeline</title>
+        <desc id="arch-desc">Author intent flows through planning, selection and context compilation into a draft; the draft passes check, repair, independent review and cross-validation; author approval settles it.</desc>
+        <defs>
+          <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L9,3 z" fill="#7b8aa3"/>
+          </marker>
+        </defs>
+        <!-- Row 1: author intent -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="40" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="72" text-anchor="middle">Author intent</text>
+          <text class="arch-sub" x="160" y="94" text-anchor="middle">intent / boundaries</text>
+        </g>
+        <!-- Row 2: planning -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="182" text-anchor="middle">Planning</text>
+          <text class="arch-sub" x="160" y="204" text-anchor="middle">volume → arc → contract</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="300" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="400" y="182" text-anchor="middle">Author selection</text>
+          <text class="arch-sub" x="400" y="204" text-anchor="middle">option + rationale</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="540" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="640" y="182" text-anchor="middle">Context compile</text>
+          <text class="arch-sub" x="640" y="204" text-anchor="middle">bounded package + SHA-256</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box state" x="780" y="150" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="880" y="182" text-anchor="middle">Canon</text>
+          <text class="arch-sub" x="880" y="204" text-anchor="middle">approved facts</text>
+        </g>
+        <!-- vertical arrows row1->row2 -->
+        <path d="M160 110 L160 150" class="arch-arrow"/>
+        <!-- row3: draft -->
+        <g class="arch-row">
+          <rect class="arch-box" x="60" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="160" y="292" text-anchor="middle">Candidate draft</text>
+          <text class="arch-sub" x="160" y="314" text-anchor="middle">drafts/ · beats → scenes</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="300" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="400" y="292" text-anchor="middle">Quick check</text>
+          <text class="arch-sub" x="400" y="314" text-anchor="middle">S2 deterministic</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box" x="540" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="640" y="292" text-anchor="middle">Independent review</text>
+          <text class="arch-sub" x="640" y="314" text-anchor="middle">S5 evidence findings</text>
+        </g>
+        <g class="arch-row">
+          <rect class="arch-box settle" x="780" y="260" width="200" height="70" rx="12"/>
+          <text class="arch-title" x="880" y="292" text-anchor="middle">Settlement</text>
+          <text class="arch-sub" x="880" y="314" text-anchor="middle">S6 → manuscript/</text>
+        </g>
+        <!-- horizontal arrows row3 -->
+        <path d="M260 295 L300 295" class="arch-arrow"/>
+        <path d="M500 295 L540 295" class="arch-arrow"/>
+        <path d="M740 295 L780 295" class="arch-arrow"/>
+        <!-- feedback loop -->
+        <path d="M640 330 L640 390 L400 390 L400 330" class="arch-loop" marker-end="url(#arr)"/>
+        <text class="arch-loop-label" x="520" y="378" text-anchor="middle">repair loop</text>
+      </svg>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CLI demo ============ -->
+<section class="cli-section">
+  <div class="container">
+    <h2 class="section-title">The author's daily routine is a short set of commands</h2>
+    <div class="cli-grid">
+      <div class="cli-window" aria-label="Command line demo">
+        <div class="cli-bar"><span class="cli-dot"></span><span class="cli-dot"></span><span class="cli-dot"></span><span class="cli-title">~/my-novel</span></div>
+        <pre class="cli-body" aria-hidden="true">
+<span class="cli-prompt">$</span> ./bin/canonloom init ~/my-novel --name "My Novel"
+<span class="cli-out">✓ project initialized (0.2.1)</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel setup --confirm
+<span class="cli-out">✓ AUTHOR_SETUP_CONFIRMED</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel idea
+<span class="cli-out">→ generated 3 candidate directions
+   [1] a locked room and an unreliable witness
+   [2] ...</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel status
+<span class="cli-out">STAGE: ideation · next_action: Start ideation
+LANGUAGE: en · WORKFLOW: standard</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel continue
+<span class="cli-out">✓ current.md updated — agent reads tasks/current.md</span>
+<span class="cli-prompt">$</span> ./bin/canonloom --root ~/my-novel diagnose
+<span class="cli-out">✓ structure OK</span>
+</pre>
+      </div>
+      <div class="cli-side">
+        <p>Commands only prepare readable task files. The agent reads <code>tasks/current.md</code>, does the work, and writes artifacts to the agreed directories.</p>
+        <ul class="cli-list">
+          <li><code>status</code> — which stage am I in?</li>
+          <li><code>continue</code> — follow the next_action (most used)</li>
+          <li><code>diagnose</code> — run this first when something breaks</li>
+          <li><code>repair</code> — fix whitelisted structural issues</li>
+          <li><code>state report</code> — summarize optional narrative state</li>
+        </ul>
+        <a class="btn btn-ghost btn-sm" href="{base}/docs/terminal-and-apps.html">Full command list →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Interactive demo ============ -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <h2 class="section-title">Try it: how a chapter walks through S0–S6</h2>
+    <p class="section-lead">Click to advance a chapter's production. Each step maps to a real gate and its artifacts.</p>
+    <div class="demo">
+      <div class="demo-tracks" id="demo-tracks" aria-live="polite">
+        <!-- injected by site.js -->
+      </div>
+      <div class="demo-log" id="demo-log" aria-live="polite">
+        <div class="demo-log-head">Run log</div>
+        <div class="demo-log-body"><p class="demo-log-empty">Click "Next step" to simulate a chapter's production.</p></div>
+      </div>
+      <div class="demo-controls">
+        <button class="btn btn-primary btn-sm" id="demo-next" type="button">Next step →</button>
+        <button class="btn btn-ghost btn-sm" id="demo-reset" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Principles / design choices ============ -->
+<section class="principles-section">
+  <div class="container">
+    <h2 class="section-title">Design "no"s</h2>
+    <div class="principles-grid">
+      <div class="principle">
+        <h3>Not a GUI editor</h3>
+        <p>It does not turn the author into an operator inside an interface.</p>
+      </div>
+      <div class="principle">
+        <h3>No multi-model by default</h3>
+        <p>A single primary model + Python deterministic tools avoids state divergence.</p>
+      </div>
+      <div class="principle">
+        <h3>No graph database</h3>
+        <p>The early problem is not query performance; it is state boundaries.</p>
+      </div>
+      <div class="principle">
+        <h3>Numbers are not quality</h3>
+        <p>"Fewer tokens" or "higher scores" are not literary quality.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Run the minimal pipeline in five minutes</h2>
+    <p>No third-party packages — just Python 3.9+.</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary" href="{base}/docs/en/user-guide.html">Read the quick start</a>
+      <a class="btn btn-ghost" href="{base}/docs/en/terminal-and-apps.html">Terminal &amp; apps</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <strong>CanonLoom</strong> v0.2.1 — command-driven, author-controlled, auditable long-form fiction production
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/Liyuk/canonloom">GitHub</a>
+      <a href="{base}/docs/">Docs</a>
+      <a href="{base}/docs/blog/">Blog</a>
+      <a href="https://github.com/Liyuk/canonloom/blob/main/LICENSE">MIT License</a>
+    </div>
+  </div>
+</footer>
+<script src="{base}/assets/site.js" defer></script>
+</body>
+</html>

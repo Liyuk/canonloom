@@ -93,6 +93,17 @@ code {
 .site-nav a { color: var(--ink-secondary); font-size: 15px; }
 .site-nav a:hover { color: var(--ink-primary); }
 .site-nav a.current { color: var(--ink-primary); font-weight: 600; }
+.lang-switch {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-strong) !important;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.lang-switch:hover { background: var(--surface-elevated); text-decoration: none; }
 .nav-toggle { display: none; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink-primary); }
 
 /* ---------- buttons ---------- */

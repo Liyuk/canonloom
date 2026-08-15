@@ -8,8 +8,9 @@ CanonLoom 的落地页与文档站，零第三方依赖，Python 标准库生成
 site/
   build.py       静态站点生成器（Python 标准库，无依赖）
   src/
-    landing.html 产品落地页（手写 HTML，含 S0–S6 流水线与交互式演示）
-    assets/      site.css / site.js / favicon.svg
+    landing.html   产品落地页（中文，含 S0–S6 流水线与交互式演示）
+    landing.en.html产品落地页（英文，/en/）
+    assets/       site.css / site.js / favicon.svg
   dist/          构建产物（GitHub Pages 部署内容，已 gitignore）
 ```
 
@@ -19,11 +20,20 @@ site/
 ## 构建与预览
 
 ```sh
-python3 site/build.py            # 构建到 site/dist/
+python3 site/build.py            # 构建到 site/dist/（默认带 /canonloom 前缀）
+CANONLOOM_SITE_BASE="" python3 site/build.py   # 根路径构建（自定义域名场景）
 python3 site/build.py --clean    # 先清空 dist 再构建
-python3 site/build.py --serve    # 构建并本地预览 http://127.0.0.1:8000
-python3 site/build.py --serve 9000
+python3 site/build.py --serve    # 本地预览（根路径模式）
 ```
+
+GitHub Pages 项目站部署在子路径 `/canonloom/`，构建器默认给所有内部链接加该前缀；
+`--serve` 与 `CANONLOOM_SITE_BASE=""` 会去掉前缀，方便本地根路径预览。
+
+## 双语
+
+- `/`（中文落地页）与 `/en/`（英文落地页）通过右上角语言开关互相跳转；
+- 每个文档页根据 `docs/`（中文）↔ `docs/en/`（英文）自动生成对照链接；
+- 博客与论文当前仅中文，语言开关指向英文落地页。
 
 ## 部署
 

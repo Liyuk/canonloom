@@ -52,6 +52,19 @@ SITE_TAGLINE = "命令驱动、作者掌舵、可审计的长篇小说生产框�
 REPO_URL = "https://github.com/Liyuk/canonloom"
 VERSION = (REPO_ROOT / "VERSION").read_text(encoding="utf-8").strip()
 
+# URL prefix for deployment under a sub-path (GitHub Pages project site lives at
+# /canonloom/). Defaults to that prefix for production; local preview builds with
+# BASE="" (root paths). Override with CANONLOOM_SITE_BASE.
+BASE = os.environ.get("CANONLOOM_SITE_BASE", "/canonloom").rstrip("/")
+SITE_BASE = BASE  # alias used by templates
+
+
+def site_url(path: str) -> str:
+    """Prefix a root-relative internal URL with the site base."""
+    if not path.startswith("/"):
+        return path
+    return BASE + path
+
 # ---------------------------------------------------------------------------
 # Markdown renderer (small, deliberate subset)
 # ---------------------------------------------------------------------------
@@ -108,9 +121,13 @@ _ANCHOR_RE = re.compile(r"^(.*?\.md)(?:#(.+))?$")
 
 def rewrite_link(href: str) -> str:
     """Rewrite internal .md links to built .html URLs; leave the rest alone."""
-    if not href or href.startswith(("http://", "https://", "mailto:", "#")):
+    if not href:
         return html.escape(href)
-    if "#" in href and not href.startswith("#"):
+    if href.startswith(("http://", "https://", "mailto:")):
+        return html.escape(href)
+    if href.startswith("#"):
+        return html.escape(href)
+    if "#" in href:
         path, anchor = href.split("#", 1)
     else:
         path, anchor = href, None
@@ -341,7 +358,7 @@ def page_url(src: Path) -> str:
     else:
         name = rel.with_suffix(".html").name
     parts = list(rel.parts[:-1]) + [name]
-    return "/docs/" + "/".join(parts)
+    return site_url("/docs/" + "/".join(parts))
 
 
 def build_link_targets(docs: list[Path]) -> None:
@@ -387,7 +404,7 @@ def page_toc(md: str) -> list[tuple[str, str, str]]:
 # ---------------------------------------------------------------------------
 
 LAYOUT = """<!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="{html_lang}" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -397,19 +414,20 @@ LAYOUT = """<!doctype html>
 <meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{repo_url}{canonical}">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="{base}/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{base}/assets/site.css">
 </head>
 <body>
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/">
+    <a class="brand" href="{base}/">
       <span class="brand-mark" aria-hidden="true">⏳</span>
       <span class="brand-name">CanonLoom</span>
       <span class="brand-ver">v{version}</span>
     </a>
     <nav class="site-nav" aria-label="主导航">
       {nav_links}
+      {lang_switch}
     </nav>
     <button class="nav-toggle" aria-label="切换导航" aria-expanded="false">☰</button>
   </div>
@@ -424,25 +442,60 @@ LAYOUT = """<!doctype html>
     </div>
     <div class="footer-links">
       <a href="{repo_url}">GitHub</a>
-      <a href="/docs/">文档</a>
-      <a href="/docs/blog/">博客</a>
+      <a href="{base}/docs/">文档</a>
+      <a href="{base}/docs/blog/">博客</a>
       <a href="{repo_url}/blob/main/LICENSE">MIT License</a>
     </div>
   </div>
 </footer>
-<script src="/assets/site.js" defer></script>
+<script src="{base}/assets/site.js" defer></script>
 </body>
 </html>
 """
 
 
 def _nav_link(url: str, text: str, canonical: str) -> str:
+    href = site_url(url) if url.startswith("/") else url
     current = url.startswith("/") and canonical.startswith(url.rstrip("/"))
     cls = ' class="current"' if current else ""
-    return f'<a href="{url}"{cls}>{text}</a>'
+    return f'<a href="{href}"{cls}>{text}</a>'
 
 
-def render_layout(title: str, description: str, content: str, canonical: str) -> str:
+def _lang_switch(src: Path | None) -> str:
+    """Build the EN ↔ 中文 switch shown in the header.
+
+    Mapping rules:
+      docs/README.md           -> /en/          (English landing)
+      docs/blog/*.md           -> None          (blog is Chinese-only; landing has no blog yet)
+      docs/en/*.md             -> /docs/<stem>.html   (Chinese counterpart, best effort)
+      docs/*.md (Chinese)      -> /docs/en/<stem>.html
+      otherwise                -> /en/
+    """
+    if src is None:
+        return f'<a class="lang-switch" href="{site_url("/en/")}" lang="en">English</a>'
+
+    rel = src.relative_to(DOCS)
+    parts = rel.parts
+
+    # EN doc -> try Chinese counterpart
+    if parts and parts[0] == "en":
+        target = DOCS / rel.relative_to("en")
+        if target.is_file():
+            return f'<a class="lang-switch" href="{page_url(target)}" lang="zh-CN">中文</a>'
+        return f'<a class="lang-switch" href="{site_url("/en/")}" lang="en">English</a>'
+
+    # Chinese doc -> EN counterpart
+    if parts and parts[0] != "en" and parts[0] != "blog":
+        target = DOCS / "en" / rel
+        if target.is_file():
+            return f'<a class="lang-switch" href="{page_url(target)}" lang="en">English</a>'
+
+    # everything else -> English landing
+    return f'<a class="lang-switch" href="{site_url("/en/")}" lang="en">English</a>'
+
+
+def render_layout(title: str, description: str, content: str, canonical: str,
+                  lang_switch: str = "", html_lang: str = "zh-CN") -> str:
     nav_links = "\n      ".join(
         _nav_link(u, t, canonical)
         for u, t in NAV[:-1]
@@ -456,6 +509,9 @@ def render_layout(title: str, description: str, content: str, canonical: str) ->
         repo_url=REPO_URL,
         version=VERSION,
         tagline=SITE_TAGLINE,
+        base=BASE,
+        lang_switch=lang_switch,
+        html_lang=html_lang,
     )
 
 
@@ -473,8 +529,6 @@ def render_docs_page(src: Path, md: str, body: str) -> str:
         )
         toc_html = f"<details class='page-toc'><summary>本页目录</summary><ul>{items}</ul></details>"
 
-    # Breadcrumb: 首页 / docs / [section dirs] / page. Intermediate crumbs link
-    # to the section's index.html when one exists, else render as plain text.
     # Breadcrumb: 首页 / docs / [section dirs] / page. A section crumb links
     # only when that directory has a landing page (a README.md source or the
     # curated blog index); otherwise it renders as plain text.
@@ -486,20 +540,16 @@ def render_docs_page(src: Path, md: str, body: str) -> str:
     crumbs.append((url, leaf_label))
 
     def _crumb_linkable(cu: str) -> bool:
-        if cu == "/docs/":
-            return True
-        if cu == "/docs/blog/":
+        if cu in ("/docs/", "/docs/blog/"):
             return True
         # section index.html exists when the section dir has a README.md
         sec = cu.removeprefix("/docs/").strip("/")
-        if sec and (DOCS / sec / "README.md").is_file():
-            return True
-        return False
+        return bool(sec) and (DOCS / sec / "README.md").is_file()
 
-    breadcrumb = '<nav class="breadcrumb" aria-label="面包屑"><a href="/">首页</a>'
+    breadcrumb = f'<nav class="breadcrumb" aria-label="面包屑"><a href="{site_url("/")}">首页</a>'
     for cu, ct in crumbs:
         if _crumb_linkable(cu):
-            breadcrumb += f'<span>/</span><a href="{cu}">{ct}</a>'
+            breadcrumb += f'<span>/</span><a href="{site_url(cu)}">{ct}</a>'
         else:
             breadcrumb += f'<span>/</span><span>{ct}</span>'
     breadcrumb += "</nav>"
@@ -516,7 +566,8 @@ def render_docs_page(src: Path, md: str, body: str) -> str:
       </div>
     </div>
     """
-    return render_layout(title, "CanonLoom 文档：" + title, content, url)
+    return render_layout(title, "CanonLoom 文档：" + title, content, url,
+                         lang_switch=_lang_switch(src))
 
 
 def render_docs_index() -> str:
@@ -535,7 +586,7 @@ def render_docs_index() -> str:
     content = """
     <div class="container docs-layout">
       <div class="docs-main">
-        <nav class="breadcrumb" aria-label="面包屑"><a href="/">首页</a><span>/</span><span>文档</span></nav>
+        <nav class="breadcrumb" aria-label="面包屑"><a href="{home}">首页</a><span>/</span><span>文档</span></nav>
         <h1>文档</h1>
         <p class="lead">CanonLoom 的协议、命令与设计文档。机器协议保持英文键名，人类指南提供中英双语入口。</p>
     """ + cards("指南", GUIDES) + cards("参考与设计", REFERENCE) + """
@@ -544,12 +595,13 @@ def render_docs_index() -> str:
           <p>项目以可读文件承载状态：<code>canonloom.json</code>（工作流状态机）、
           <code>tasks/current.md</code>（当前任务）、<code>schemas/</code>（协议）、
           <code>scripts/</code>（确定性工具）。完整目录结构见
-          <a href="/docs/en/initialization.html">初始化协议</a>。</p>
+          <a href="{init_url}">初始化协议</a>。</p>
         </section>
       </div>
     </div>
-    """
-    return render_layout("文档", "CanonLoom 文档索引", content, "/docs/")
+    """.format(home=site_url("/"), init_url=site_url("/docs/en/initialization.html"))
+    return render_layout("文档", "CanonLoom 文档索引", content, "/docs/",
+                         lang_switch=_lang_switch(None))
 
 
 def render_blog_index() -> str:
@@ -577,14 +629,15 @@ def render_blog_index() -> str:
     content = f"""
     <div class="container docs-layout">
       <div class="docs-main">
-        <nav class="breadcrumb" aria-label="面包屑"><a href="/">首页</a><span>/</span><span>博客</span></nav>
+        <nav class="breadcrumb" aria-label="面包屑"><a href="{site_url("/")}">首页</a><span>/</span><span>博客</span></nav>
         <h1>博客</h1>
         <p class="lead">发布公告、实操指南与设计思考。</p>
         <div class="blog-grid">{cards}</div>
       </div>
     </div>
     """
-    return render_layout("博客", "CanonLoom 博客", content, "/docs/blog/")
+    return render_layout("博客", "CanonLoom 博客", content, "/docs/blog/",
+                         lang_switch=_lang_switch(None))
 
 
 # ---------------------------------------------------------------------------
@@ -617,9 +670,13 @@ def build(clean: bool = False) -> None:
     docs = collect_docs()
     build_link_targets(docs)
 
-    # landing page
-    landing = (SRC / "landing.html").read_text(encoding="utf-8")
-    (DIST / "index.html").write_text(landing, encoding="utf-8")
+    # landing pages (zh at /, en at /en/)
+    landing_zh = (SRC / "landing.html").read_text(encoding="utf-8").replace("{base}", BASE)
+    (DIST / "index.html").write_text(landing_zh, encoding="utf-8")
+    landing_en = (SRC / "landing.en.html").read_text(encoding="utf-8").replace("{base}", BASE)
+    en_dir = DIST / "en"
+    en_dir.mkdir(parents=True, exist_ok=True)
+    (en_dir / "index.html").write_text(landing_en, encoding="utf-8")
 
     # docs pages
     for src in docs:
@@ -628,8 +685,9 @@ def build(clean: bool = False) -> None:
         md = src.read_text(encoding="utf-8").lstrip("﻿")
         body = render_markdown(md)
         html_out = render_docs_page(src, md, body)
-        url = page_url(src)  # e.g. /docs/strong-constraints.html or /docs/README.html
-        dst = DIST / url.lstrip("/")
+        url = page_url(src)  # e.g. /canonloom/docs/strong-constraints.html
+        rel = url[len(BASE):] if BASE else url  # strip prefix for the on-disk path
+        dst = DIST / rel.lstrip("/")
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_text(html_out, encoding="utf-8")
 
@@ -645,6 +703,10 @@ def build(clean: bool = False) -> None:
 
 
 def serve(port: int = 8000) -> None:
+    """Build and serve locally. Local preview serves at root, so the base
+    prefix is stripped (assets and links work at /)."""
+    global BASE
+    BASE = ""
     build(clean=True)
     os.chdir(DIST)
 
