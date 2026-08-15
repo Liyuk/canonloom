@@ -2,6 +2,7 @@
 
 > 项目介绍 · CanonLoom 0.2.1
 > 仓库：[https://github.com/Liyuk/canonloom](https://github.com/Liyuk/canonloom)
+> 在线演示站：[https://liyuk.github.io/canonloom/](https://liyuk.github.io/canonloom/)（落地页 + 文档站 + 交互式 S0–S6 演示）
 > 系统设计与评估详见 [0.2.0 论文](../paper-0.2.0/paper.md)
 
 ## 这是什么
@@ -11,6 +12,8 @@ CanonLoom 是一个命令驱动的、面向长篇小说人机协作的本地工�
 它不是 GUI 写作软件，也不是"一句话生成整本小说"的黑箱工具。它解决的问题是长篇小说写作里最常见的一类失败：跨章节的状态漂移——人物动机前后不一致、时间线断裂、模型提出的设定未经批准就悄悄变成"故事事实"、审查意见无法追溯成具体的修订任务。
 
 设计上最本质的一点：**协议在文件里，不在模型的记忆里**。项目状态、计划、草稿、审查、批准全部存为可读文件（Markdown / JSON / JSONL），因此不同 Agent 可以在同一套文件协议上工作，中断后可以从最后一个合法产物恢复。
+
+如果想直接感受 S0–S6 流程，可以打开[在线演示站](https://liyuk.github.io/canonloom/)，在"试试看：一章如何走完 S0–S6"里逐步点一遍：章契 → 草稿 → 检查 → 修订 → 审查 → 结算，每一步都对应真实的门禁与产物。
 
 ```text
 作者    敲短命令、做选择、批准
@@ -146,4 +149,4 @@ examples/minimal-project/smoke.sh
 - **依赖**：Python 标准库，无第三方依赖
 - **版本**：0.2.1
 
-相关文档：[README（中文）](../../README.md) · [0.2.0 系统设计论文](../paper-0.2.0/paper.md) · [强约束 S0–S6](../strong-constraints.md) · [作者使用指南](../user-guide.md) · [生产工具](../production-tools.md) · [文档索引](../README.md)
+相关文档：[在线演示站](https://liyuk.github.io/canonloom/) · [README（中文）](../../README.md) · [0.2.0 系统设计论文](../paper-0.2.0/paper.md) · [强约束 S0–S6](../strong-constraints.md) · [作者使用指南](../user-guide.md) · [生产工具](../production-tools.md) · [文档索引](../README.md)

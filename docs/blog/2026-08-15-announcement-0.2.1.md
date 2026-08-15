@@ -2,6 +2,7 @@
 
 > 发布公告 · CanonLoom 0.2.1 · 2026-08-15
 > 完整系统设计论文：[docs/paper-0.2.0/paper.md](../paper-0.2.0/paper.md)（0.2.0 定稿）
+> 在线演示站：[https://liyuk.github.io/canonloom/](https://liyuk.github.io/canonloom/)（落地页 + 文档站 + 交互式 S0–S6 演示）
 
 > **一句话总结**：CanonLoom 不解决"让模型写出更好的句子"，它解决的是——当一部小说写到第 40 章时，为什么第 3 章埋的线还在、人物的动机没有漂移、模型发明的设定没有悄悄变成"故事事实"。它把长篇小说生产从"一段不可追踪的提示词续写"，重新建模为**可恢复、可审计、作者批准每一步状态晋升**的生产流程。
 
@@ -146,6 +147,7 @@ cd canonloom
 
 **相关文档**
 
+- [在线演示站](https://liyuk.github.io/canonloom/)：落地页 + 文档站（中英双语，含交互式 S0–S6 章节生产演示）
 - [README（中文）](../../README.md)
 - [系统设计论文（0.2.0）](../paper-0.2.0/paper.md)
 - [强约束 S0–S6](../strong-constraints.md)
