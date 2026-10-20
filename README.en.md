@@ -2,13 +2,109 @@
 
 > A command-driven, author-controlled, auditable workflow for long-form fiction.
 
-[中文 README](README.md) · [Site & Docs](https://liyuk.github.io/canonloom/)
+[![Version 0.2.1](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![CI](https://github.com/Liyuk/canonloom/actions/workflows/ci.yml/badge.svg)](https://github.com/Liyuk/canonloom/actions/workflows/ci.yml)
+
+[中文 README](README.md)
+
+**Site and docs:** [https://liyuk.github.io/canonloom/](https://liyuk.github.io/canonloom/) (English landing: [/en/](https://liyuk.github.io/canonloom/en/))
 
 Version: `0.2.1` · [Changelog](CHANGELOG.md)
 
 CanonLoom is not a GUI writing application and not a black box that claims to generate an entire novel from one prompt. It turns novel production into inspectable, resumable tasks: ideation, reference analysis, planning, chapter contracts, beats, bounded context, drafting, revision, review, and settlement.
 
 The author runs simple commands. Codex, Claude Code, or another file-capable agent performs the creative work. Python handles deterministic validation, indexing, provenance, run records, repair plans, and stage gates.
+
+## What you actually get
+
+- **Files are the state.** The author runs `init`, `setup`, `idea`, and `continue`. The agent reads `tasks/current.md` and writes into the agreed directories.
+- **Canon waits for approval.** Ideas, candidates, drafts, review findings, and narrative-state proposals stay in a proposal layer. A draft reaches `manuscript/` only with an S6 approval file.
+- **S0–S6 stage gates.** Contract, draft, quick check, repair, strict check, independent review, cross-validation, and settlement run in order.
+- **Planning from large to small.** `planning` walks project → volume → arc → chapter contract → beats. A lower level carries out a decision the level above has already accepted.
+- **Deterministic checks in the standard library.** Python 3.9+ and no third-party packages: validation, indexes, SHA-256 source fingerprints, diagnosis, and repairs that touch only structure.
+- **Codex and Claude Code can both take the handoff.** `AGENTS.md` and `CLAUDE.md` are the entry points. Protocol keys stay English; prose follows `intent/author-setup.json`.
+
+## Pipeline
+
+The names below are the commands and stages in this repository. `idea`, `reference`, and `import` are parallel entries. Accepted intent then enters planning.
+
+```mermaid
+flowchart TD
+  setup["setup · author configuration"] --> idea["idea · ideation"]
+  setup --> reference["reference · reference analysis"]
+  setup --> imported["import · existing manuscript"]
+  idea --> project["Project"]
+  reference --> project
+  imported --> project
+  project --> volume["Volume"]
+  volume --> arc["Arc"]
+  arc --> contract["Chapter contract"]
+  contract --> beats["Beats"]
+  beats --> S0["S0 Contract"]
+  S0 --> S1["S1 Draft"]
+  S1 --> S2["S2 Quick Check"]
+  S2 --> S3["S3 Repair"]
+  S3 --> S4["S4 Strict Check"]
+  S4 --> S5["S5 Independent Review"]
+  S5 --> S5b["S5b Cross-Validation"]
+  S5b --> S6["S6 Settlement"]
+```
+
+A chapter normally runs S0 → S1 → S2 → S3 → S4 → S5 → S5b → S6. Blocking findings at S4, S5, or S5b return to S3 or a human decision. Artifacts and return rules are in [Architecture](#architecture); the full protocol is in [Strong S0–S6 constraints](docs/strong-constraints.md).
+
+## Quick start
+
+Requirements: Python 3.9+. No third-party dependencies are required.
+
+```sh
+git clone https://github.com/Liyuk/canonloom
+cd canonloom
+
+./bin/canonloom init ~/my-novel --name "My Novel" \
+  --language en-US --genre "speculative mystery" \
+  --audience "adult readers" --pov close-third
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel setup --confirm
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
+```
+
+Initialization intentionally separates author-confirmed configuration from AI recognition:
+
+```text
+author confirmation → intent/author-setup.json
+AI recognition      → intent/ai-recognition.json
+style constraints   → intent/style-profile.json
+then                → idea / planning / work
+```
+
+AI recognition is a proposal layer. It does not silently promote facts into `canon/`.
+
+## Everyday commands
+
+```sh
+./bin/canonloom --root ~/my-novel status       # Where am I?
+./bin/canonloom --root ~/my-novel continue     # Follow next_action
+./bin/canonloom --root ~/my-novel diagnose     # What is structurally wrong?
+./bin/canonloom --root ~/my-novel repair       # Repair safe structural issues
+./bin/canonloom --root ~/my-novel upgrade      # Upgrade an older project to the current structure
+./bin/canonloom --version                      # Show framework version
+./bin/canonloom --root ~/my-novel state report # Summarize optional narrative state
+./bin/canonloom --root ~/my-novel state validate # Validate events, knowledge, and reveals
+./bin/canonloom advanced                       # Show Agent/maintainer tools
+```
+
+Run the minimal end-to-end smoke test with:
+
+```sh
+examples/minimal-project/smoke.sh
+```
+
+Creation and analysis entry points include `setup`, `idea`, `reference`, `import`, `planning`, `work`, `characters`, `world`, `research`, `revision`, and `review`.
+
+Authors do not need to learn `gate`, `context`, `handoff`, or `artifact-check`. These commands remain available for agents and maintainers; run `canonloom advanced` to see the complete list.
 
 ## Why it exists
 
@@ -72,58 +168,6 @@ CanonLoom separates the language of the machine protocol from the language of th
 - an agent may explain decisions in the author's preferred language, but must preserve paths, schemas, and approval states.
 
 See [docs/language-policy.md](docs/language-policy.md).
-
-## Quick start
-
-Requirements: Python 3.9+. No third-party dependencies are required.
-
-```sh
-git clone <your-canonloom-repo>
-cd canonloom
-
-./bin/canonloom init ~/my-novel --name "My Novel" \
-  --language en-US --genre "speculative mystery" \
-  --audience "adult readers" --pov close-third
-./bin/canonloom --root ~/my-novel setup
-./bin/canonloom --root ~/my-novel setup --confirm
-./bin/canonloom --root ~/my-novel idea
-./bin/canonloom --root ~/my-novel continue
-```
-
-Initialization intentionally separates author-confirmed configuration from AI recognition:
-
-```text
-author confirmation → intent/author-setup.json
-AI recognition      → intent/ai-recognition.json
-style constraints   → intent/style-profile.json
-then                → idea / planning / work
-```
-
-AI recognition is a proposal layer. It does not silently promote facts into `canon/`.
-
-## Everyday commands
-
-```sh
-./bin/canonloom --root ~/my-novel status       # Where am I?
-./bin/canonloom --root ~/my-novel continue     # Follow next_action
-./bin/canonloom --root ~/my-novel diagnose     # What is structurally wrong?
-./bin/canonloom --root ~/my-novel repair       # Repair safe structural issues
-./bin/canonloom --root ~/my-novel upgrade      # Upgrade an older project to the current structure
-./bin/canonloom --version                      # Show framework version
-./bin/canonloom --root ~/my-novel state report # Summarize optional narrative state
-./bin/canonloom --root ~/my-novel state validate # Validate events, knowledge, and reveals
-./bin/canonloom advanced                       # Show Agent/maintainer tools
-```
-
-Run the minimal end-to-end smoke test with:
-
-```sh
-examples/minimal-project/smoke.sh
-```
-
-Creation and analysis entry points include `setup`, `idea`, `reference`, `import`, `planning`, `work`, `characters`, `world`, `research`, `revision`, and `review`.
-
-Authors do not need to learn `gate`, `context`, `handoff`, or `artifact-check`. These commands remain available for agents and maintainers; run `canonloom advanced` to see the complete list.
 
 ## Recovery and observability
 
