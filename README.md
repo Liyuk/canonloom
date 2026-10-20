@@ -2,13 +2,126 @@
 
 > 一个命令驱动、作者掌舵、可审计的长篇小说生产框架。
 
-[English README](README.en.md) · [文档与落地页](https://liyuk.github.io/canonloom/)
+[![Version 0.2.1](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![CI](https://github.com/Liyuk/canonloom/actions/workflows/ci.yml/badge.svg)](https://github.com/Liyuk/canonloom/actions/workflows/ci.yml)
+
+[English README](README.en.md)
+
+**落地页与文档：** [https://liyuk.github.io/canonloom/](https://liyuk.github.io/canonloom/)（中文首页，英文在 [/en/](https://liyuk.github.io/canonloom/en/)）
 
 版本：`0.2.1` · [变更记录](CHANGELOG.md)
 
 CanonLoom 不是 GUI 写作软件，也不是“一句话自动生成整本小说”的黑箱。它把小说生产拆成一组可恢复、可检查、可交接的任务：创意、拆书、规划、章契、Beat、上下文编译、生成、修订、审查和结算。
 
 作者只需要执行简单指令；Codex、Claude Code 或其他 Agent 读取任务文件并完成具体创作；Python 脚本负责确定性检查、索引、来源追踪、运行记录和阶段门禁。
+
+## 它实际提供什么
+
+- **文件即状态。** 作者运行 `init`、`setup`、`idea`、`continue`；Agent 读取 `tasks/current.md`，把产物写进约定目录。
+- **批准之后才进入 canon。** 创意、候选、草稿、审查意见和叙事状态都先停在提案层。草稿写入 `manuscript/` 需要 S6 批准文件。
+- **S0–S6 阶段门禁。** 章契、草稿、快检、修订、严检、独立审查、交叉验证、结算按序进行，不能跳步。
+- **由大到小的规划。** `planning` 沿项目 → 卷 → 篇章 → 章契 → Beat 展开，下层只落实已经确认的上层决定。
+- **标准库里的确定性检查。** Python 3.9+、无第三方依赖：校验、索引、SHA-256 来源指纹、诊断，以及只修补结构的安全修复。
+- **Codex 与 Claude Code 都能接手。** 入口是 `AGENTS.md` 和 `CLAUDE.md`。协议键名保持英文，正文语言跟随 `intent/author-setup.json`。
+
+## 流水线
+
+下面用的是仓库里的命令名和阶段名。`idea`、`reference`（拆书）和 `import` 是三条并列入口，确认后的意图再进入规划。
+
+```mermaid
+flowchart TD
+  setup["setup · 作者配置"] --> idea["idea · 创意"]
+  setup --> reference["reference · 拆书"]
+  setup --> imported["import · 导入旧稿"]
+  idea --> project["项目"]
+  reference --> project
+  imported --> project
+  project --> volume["卷"]
+  volume --> arc["篇章"]
+  arc --> contract["章契"]
+  contract --> beats["Beat"]
+  beats --> S0["S0 Contract"]
+  S0 --> S1["S1 Draft"]
+  S1 --> S2["S2 Quick Check"]
+  S2 --> S3["S3 Repair"]
+  S3 --> S4["S4 Strict Check"]
+  S4 --> S5["S5 Independent Review"]
+  S5 --> S5b["S5b Cross-Validation"]
+  S5b --> S6["S6 Settlement"]
+```
+
+章节生产的正常顺序是 S0 → S1 → S2 → S3 → S4 → S5 → S5b → S6。S4、S5、S5b 的阻断项回到 S3 或人工决策。阶段产物和回退规则见 [当前架构](#当前架构)，完整协议见 [强约束 S0–S6](docs/strong-constraints.md)。
+
+## 两分钟开始
+
+要求：Python 3.9+，无第三方依赖。
+
+```sh
+git clone https://github.com/Liyuk/canonloom
+cd canonloom
+
+./bin/canonloom init ~/my-novel --name "My Novel"
+./bin/canonloom --root ~/my-novel setup
+./bin/canonloom --root ~/my-novel idea
+./bin/canonloom --root ~/my-novel continue
+```
+
+`init` 之后先完成 setup：作者配置题材、受众、视角、文风方向和内容边界；Agent 再把已有材料识别成候选人物、世界、线索和技法。作者配置与 AI 识别分开保存，AI 推断不会自动进入 canon。
+
+```text
+作者确认 → intent/author-setup.json
+AI 识别提案 → intent/ai-recognition.json
+文风约束 → intent/style-profile.json
+确认后 → idea / planning / work
+```
+
+作者确认初始化配置：
+
+```sh
+./bin/canonloom --root ~/my-novel setup --confirm
+```
+
+作者日常最常用的命令：
+
+```sh
+./bin/canonloom --root ~/my-novel status       # 当前处于什么阶段？
+./bin/canonloom --root ~/my-novel continue     # 按 next_action 继续
+./bin/canonloom --root ~/my-novel diagnose     # 检查结构和状态
+./bin/canonloom --root ~/my-novel repair       # 修复安全的结构问题
+./bin/canonloom --root ~/my-novel upgrade      # 将旧项目补齐到当前协议结构
+./bin/canonloom --version                      # 查看框架版本
+./bin/canonloom --root ~/my-novel state report # 汇总可选叙事状态
+./bin/canonloom --root ~/my-novel state validate # 校验事件、知识与揭示
+./bin/canonloom advanced                       # 查看 Agent/维护层工具
+```
+
+最小示例可以直接运行：
+
+```sh
+examples/minimal-project/smoke.sh
+```
+
+创作入口：
+
+```sh
+./bin/canonloom --root ~/my-novel setup      # 完成作者配置和 AI 识别入口
+./bin/canonloom --root ~/my-novel idea         # 创意产生
+./bin/canonloom --root ~/my-novel reference    # 拆书/分析参考作品
+./bin/canonloom --root ~/my-novel import       # 导入已有稿件
+./bin/canonloom --root ~/my-novel planning     # 项目 → 卷 → 篇章 → 章契 → Beat
+./bin/canonloom --root ~/my-novel work         # 开始一个工作单元
+./bin/canonloom --root ~/my-novel characters   # 人物校准
+./bin/canonloom --root ~/my-novel world        # 世界规则推演
+./bin/canonloom --root ~/my-novel research     # 资料核验
+./bin/canonloom --root ~/my-novel revision     # 问题驱动修订
+./bin/canonloom --root ~/my-novel review       # 审查
+```
+
+命令只负责准备可读的任务文件。Agent 读取 `tasks/current.md`，执行任务并把产物写入约定目录。
+
+普通作者不需要学习 `gate`、`context`、`handoff`、`artifact-check` 等内部工具。它们仍然存在，主要由 Agent 或维护者调用；运行 `canonloom advanced` 可以查看完整列表。
 
 ## 语言策略
 
@@ -77,75 +190,6 @@ Python：校验、索引、上下文 provenance、handoff、token/耗时记录�
 ```
 
 这样可以减少多个模型重复读取上下文造成的 token 浪费，也减少不同模型对 canon 的理解分叉。多模型交叉仍可作为高风险章节的可选实验，但不建议作为默认工作流；如果使用，应保持上下文隔离，只比较报告，不合并隐式记忆。
-
-## 两分钟开始
-
-要求：Python 3.9+，无第三方依赖。
-
-```sh
-git clone <your-canonloom-repo>
-cd canonloom
-
-./bin/canonloom init ~/my-novel --name "My Novel"
-./bin/canonloom --root ~/my-novel setup
-./bin/canonloom --root ~/my-novel idea
-./bin/canonloom --root ~/my-novel continue
-```
-
-`init` 之后先完成 setup：作者配置题材、受众、视角、文风方向和内容边界；Agent 再把已有材料识别成候选人物、世界、线索和技法。作者配置与 AI 识别分开保存，AI 推断不会自动进入 canon。
-
-```text
-作者确认 → intent/author-setup.json
-AI 识别提案 → intent/ai-recognition.json
-文风约束 → intent/style-profile.json
-确认后 → idea / planning / work
-```
-
-作者确认初始化配置：
-
-```sh
-./bin/canonloom --root ~/my-novel setup --confirm
-```
-
-作者日常最常用的命令：
-
-```sh
-./bin/canonloom --root ~/my-novel status       # 当前处于什么阶段？
-./bin/canonloom --root ~/my-novel continue     # 按 next_action 继续
-./bin/canonloom --root ~/my-novel diagnose     # 检查结构和状态
-./bin/canonloom --root ~/my-novel repair       # 修复安全的结构问题
-./bin/canonloom --root ~/my-novel upgrade      # 将旧项目补齐到当前协议结构
-./bin/canonloom --version                      # 查看框架版本
-./bin/canonloom --root ~/my-novel state report # 汇总可选叙事状态
-./bin/canonloom --root ~/my-novel state validate # 校验事件、知识与揭示
-./bin/canonloom advanced                       # 查看 Agent/维护层工具
-```
-
-最小示例可以直接运行：
-
-```sh
-examples/minimal-project/smoke.sh
-```
-
-创作入口：
-
-```sh
-./bin/canonloom --root ~/my-novel setup      # 完成作者配置和 AI 识别入口
-./bin/canonloom --root ~/my-novel idea         # 创意产生
-./bin/canonloom --root ~/my-novel reference    # 拆书/分析参考作品
-./bin/canonloom --root ~/my-novel import       # 导入已有稿件
-./bin/canonloom --root ~/my-novel planning     # 项目 → 卷 → 篇章 → 章契 → Beat
-./bin/canonloom --root ~/my-novel work         # 开始一个工作单元
-./bin/canonloom --root ~/my-novel characters   # 人物校准
-./bin/canonloom --root ~/my-novel world        # 世界规则推演
-./bin/canonloom --root ~/my-novel research     # 资料核验
-./bin/canonloom --root ~/my-novel revision     # 问题驱动修订
-./bin/canonloom --root ~/my-novel review       # 审查
-```
-
-命令只负责准备可读的任务文件。Agent 读取 `tasks/current.md`，执行任务并把产物写入约定目录。
-
-普通作者不需要学习 `gate`、`context`、`handoff`、`artifact-check` 等内部工具。它们仍然存在，主要由 Agent 或维护者调用；运行 `canonloom advanced` 可以查看完整列表。
 
 ## 运行记录与自我修复
 
